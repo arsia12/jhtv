@@ -47,7 +47,7 @@ export class ConfigService {
     return {
       entities,
       keepConnectionAlive: true,
-      type: 'psql',
+      type: 'postgres',
       host: this.get('DB_HOST'),
       port: this.getNumber('DB_PORT'),
       username: this.get('DB_USERNAME'),
@@ -59,7 +59,6 @@ export class ConfigService {
         typeof jest === 'undefined',
       migrationsRun: false,
       synchronize: false,
-      timezone: '+09:00',
     };
   }
 }
