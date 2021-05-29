@@ -1,6 +1,6 @@
-import { Column, CreateDateColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
-export class User {
+export class UserEntity {
     @PrimaryGeneratedColumn()
     id : number;
 
@@ -25,4 +25,10 @@ export class User {
     @Column({name : 'rank'})
     rank : number;
 
+    // @OneToMany(() => PhotoEntity, (i) => i.user, { cascade: true })
+    // @JoinColumn({
+    // name: 'mem_id',
+    // referencedColumnName: 'mem_id',
+    // })
+    // photo: PhotoEntity[];
 }
