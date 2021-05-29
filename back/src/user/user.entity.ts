@@ -1,4 +1,7 @@
-import { Column, CreateDateColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BoardEntity } from "src/board/board.entity";
+import { ChannelEntity } from "src/channel/channel.entity";
+import { CommentEntity } from "src/comment/comment.entity";
+import { Column, CreateDateColumn, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 export class UserEntity {
     @PrimaryGeneratedColumn()
@@ -25,10 +28,24 @@ export class UserEntity {
     @Column({name : 'rank'})
     rank : number;
 
-    // @OneToMany(() => PhotoEntity, (i) => i.user, { cascade: true })
-    // @JoinColumn({
-    // name: 'mem_id',
-    // referencedColumnName: 'mem_id',
-    // })
-    // photo: PhotoEntity[];
+    @OneToMany(() => BoardEntity, (i) => i.user, { cascade: true })
+    @JoinColumn({
+    name: 'id',
+    referencedColumnName: 'user_id',
+    })
+    board: BoardEntity[];
+
+    @OneToMany(() => CommentEntity, (i) => i.user, { cascade: true })
+    @JoinColumn({
+    name: 'id',
+    referencedColumnName: 'user_id',
+    })
+    comment: CommentEntity[];
+
+    @OneToMany(() => ChannelEntity, (i) => i.user, { cascade: true })
+    @JoinColumn({
+    name: 'id',
+    referencedColumnName: 'user_id',
+    })
+    channel : ChannelEntity[];
 }
