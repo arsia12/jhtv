@@ -1,6 +1,6 @@
-import { BoardEntity } from "src/board/board.entity";
-import { ChannelEntity } from "src/channel/channel.entity";
-import { CommentEntity } from "src/comment/comment.entity";
+import { BoardEntity } from "src/app_modules/board/board.entity";
+import { ChannelEntity } from "src/app_modules/channel/channel.entity";
+import { CommentEntity } from "src/app_modules/comment/comment.entity";
 import { Column, CreateDateColumn, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 export class UserEntity {

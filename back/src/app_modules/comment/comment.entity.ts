@@ -1,5 +1,5 @@
-import { BoardEntity } from "src/board/board.entity";
-import { UserEntity } from "src/user/user.entity";
+import { BoardEntity } from "src/app_modules/board/board.entity";
+import { UserEntity } from "src/app_modules/user/user.entity";
 import { Column, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 export class CommentEntity {
