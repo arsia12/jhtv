@@ -11,7 +11,7 @@ export class AuthService {
     ) {}
 
     async validateUser(body : UserLoginDto) : Promise<any>{
-        // console.log(body.user_id);
-        // const user = await this.userService
+        console.log(body.username);
+        const user = await this.userService
     }
  }

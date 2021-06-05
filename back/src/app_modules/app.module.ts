@@ -5,6 +5,7 @@ import { SharedModule } from 'src/shared_modules/shared.module';
 import { AuthModule } from './auth/auth.module';
 import { BoardModule } from './board/board.module';
 import { ChannelModule } from './channel/channel.module';
+import { CommentModule } from './comment/comment.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -15,7 +16,8 @@ import { UserModule } from './user/user.module';
         // AuthModule,
         UserModule,
         ChannelModule,
-        BoardModule
+        BoardModule,
+        CommentModule,
       ],
       useFactory: (configService: ConfigService) => configService.typeOrmConfig,
       inject: [ConfigService],

@@ -1,7 +1,8 @@
 import { BoardEntity } from "src/app_modules/board/board.entity";
 import { ChannelEntity } from "src/app_modules/channel/channel.entity";
 import { CommentEntity } from "src/app_modules/comment/comment.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, Column, CreateDateColumn, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { bcrypt } from "bcrypt";
 
 @Entity({ name : 'User'})
 export class UserEntity {
@@ -49,4 +50,9 @@ export class UserEntity {
     referencedColumnName: 'user_id',
     })
     channel : ChannelEntity[];
+
+    @BeforeInsert()
+    async userEncryption(){
+        this.password = await bcrypt.hash(this.password, 5);
+    }
 }
