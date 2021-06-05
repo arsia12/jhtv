@@ -1,17 +1,9 @@
-import { ChannelEntity } from 'src/app_modules/channel/channel.entity';
-import { CommentEntity } from 'src/app_modules/comment/comment.entity';
-import { UserEntity } from 'src/app_modules/user/user.entity';
-import {
-  Column,
-  CreateDateColumn,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  Entity,
-} from 'typeorm';
+import { ChannelEntity } from "src/app_modules/channel/channel.entity";
+import { CommentEntity } from "src/app_modules/comment/comment.entity";
+import { UserEntity } from "src/app_modules/user/user.entity";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity({ name: 'Board' })
+@Entity({name : 'Board'})
 export class BoardEntity {
   @PrimaryGeneratedColumn()
   id: number;

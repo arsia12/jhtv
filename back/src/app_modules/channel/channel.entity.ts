@@ -1,8 +1,8 @@
 import { BoardEntity } from "src/app_modules/board/board.entity";
 import { UserEntity } from "src/app_modules/user/user.entity";
-import { Column, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Entity } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity({name:'Channel'})
+@Entity({name : 'Channel'})
 export class ChannelEntity {
     @PrimaryGeneratedColumn()
     id : number;

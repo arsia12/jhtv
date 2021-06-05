@@ -1,14 +1,8 @@
-import { BoardEntity } from 'src/app_modules/board/board.entity';
-import { UserEntity } from 'src/app_modules/user/user.entity';
-import {
-  Column,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  Entity,
-} from 'typeorm';
+import { BoardEntity } from "src/app_modules/board/board.entity";
+import { UserEntity } from "src/app_modules/user/user.entity";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity({ name: 'Comment' })
+@Entity({ name : 'comment'})
 export class CommentEntity {
   @PrimaryGeneratedColumn()
   id: number;
