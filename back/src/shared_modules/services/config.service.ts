@@ -58,7 +58,7 @@ export class ConfigService {
           this.get('APP_ENV') === APP_ENV.DEV) &&
         typeof jest === 'undefined',
       migrationsRun: false,
-      synchronize: false,
+      synchronize: true,
     };
   }
 }

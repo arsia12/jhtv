@@ -1,7 +1,8 @@
 import { BoardEntity } from "src/app_modules/board/board.entity";
 import { UserEntity } from "src/app_modules/user/user.entity";
-import { Column, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
+@Entity({name : 'Channel'})
 export class ChannelEntity {
     @PrimaryGeneratedColumn()
     id : number;
@@ -12,8 +13,9 @@ export class ChannelEntity {
     @Column({name : 'user_id'})
     user_id : number;
 
-    @Column({name : 'content'})
-    content : Text;
+    @Column({name : 'content',
+            type : 'text' })
+    content : string;
 
     @OneToMany(() => BoardEntity, (i) => i.channel, { cascade: true })
     @JoinColumn({
