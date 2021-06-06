@@ -32,7 +32,7 @@ export class BoardService {
             msg:'채널이 존재하지 않습니다.'
         })
     }
-    // 수정필요,
+    // 수정예정
     const a = JSON.parse(JSON.stringify(body));
     a.user = 2;
     a.channel = data.id;
