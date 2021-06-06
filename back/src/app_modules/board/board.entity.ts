@@ -1,20 +1,31 @@
-import { ChannelEntity } from "src/app_modules/channel/channel.entity";
-import { CommentEntity } from "src/app_modules/comment/comment.entity";
-import { UserEntity } from "src/app_modules/user/user.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { ChannelEntity } from 'src/app_modules/channel/channel.entity';
+import { CommentEntity } from 'src/app_modules/comment/comment.entity';
+import { UserEntity } from 'src/app_modules/user/user.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-@Entity({name : 'Board'})
+@Entity({ name: 'Board' })
 export class BoardEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'channel_id' })
-  channel_id: number;
+  @Column()
+  name: string;
+
+  @Column({ type: 'text' })
+  content: string;
 
   @Column({ name: 'movie' })
   movie: string;
 
-  @Column({ name: 'read_count' })
+  @Column({ name: 'read_count', default: 0 })
   read_count: number;
 
   @CreateDateColumn()
@@ -30,9 +41,9 @@ export class BoardEntity {
   @OneToMany(() => CommentEntity, (i) => i.board, { cascade: true })
   @JoinColumn({
     name: 'id',
-    referencedColumnName: 'board_id',
+    referencedColumnName: 'comment_id',
   })
-  board: BoardEntity[];
+  comment: CommentEntity[];
 
   @ManyToOne(() => ChannelEntity, { onDelete: 'CASCADE' })
   @JoinColumn({

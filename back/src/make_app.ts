@@ -26,8 +26,8 @@ import {
     //app.use(helmet());
     app.use(express.static(join(process.cwd(), '/uploads')));
     app.setGlobalPrefix('api');
-    app.setBaseViewsDir(join(process.cwd(), 'views'));
-    app.setViewEngine('hbs');
+    // app.setBaseViewsDir(join(process.cwd(), 'views'));
+    // app.setViewEngine('hbs');
     app.useGlobalPipes(new ValidationPipe());
     app.use(bodyParser.json({ limit: '10mb' }));
     const { httpAdapter } = app.get(HttpAdapterHost);

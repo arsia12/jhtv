@@ -13,7 +13,7 @@ import { CommentModule } from './comment/comment.module';
     TypeOrmModule.forRootAsync({
       imports: [
         SharedModule,
-        AuthModule,
+        //AuthModule,
         BoardModule,
         ChannelModule,
         CommentModule,

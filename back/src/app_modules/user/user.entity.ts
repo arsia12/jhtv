@@ -1,7 +1,8 @@
 import { BoardEntity } from "src/app_modules/board/board.entity";
-import { ChannelEntity } from "src/app_modules/channel/channel.entity";
 import { CommentEntity } from "src/app_modules/comment/comment.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn, OneToOne } from "typeorm";
+
+// User.rank enum 필요
 
 @Entity({ name : 'User'})
 export class UserEntity {
@@ -23,7 +24,7 @@ export class UserEntity {
   @Column({ name: 'nickname' })
   nickname: string;
 
-  @CreateDateColumn({ name: 'regdate' })
+  @CreateDateColumn({ name: 'regdate', nullable: true })
   regdate: Date;
 
   @Column({ name: 'rank' })
@@ -43,10 +44,7 @@ export class UserEntity {
   })
   comment: CommentEntity[];
 
-  @OneToMany(() => ChannelEntity, (i) => i.user, { cascade: true })
-  @JoinColumn({
-    name: 'id',
-    referencedColumnName: 'user_id',
-  })
-  channel: ChannelEntity[];
+  // @OneToOne(() => ChannelEntity, (i) => i.user, { cascade: true })
+  // @JoinColumn()
+  // channel: ChannelEntity;
 }
