@@ -27,5 +27,5 @@ export class ChannelEntity {
     user: UserEntity;
 
     @CreateDateColumn()
-    date: Date;
+    regdate: Date;
 }
