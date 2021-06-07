@@ -1,4 +1,5 @@
 import { Controller } from '@nestjs/common';
+import { RouterTag } from 'src/common/decorators/router_swagger_tag.decorator';
 
-@Controller('user')
+@RouterTag('user')
 export class UserController {}
