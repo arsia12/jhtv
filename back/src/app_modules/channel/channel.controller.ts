@@ -27,5 +27,6 @@ export class ChannelController extends AbstractController {
   @Post()
   async createChannel(@Body() body:CreateChannelDTO) {
       const data = await this.channelService.createChannel(body)
+      return this.makeResponse({ data })
   }
 }

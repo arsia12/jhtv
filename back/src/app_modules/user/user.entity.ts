@@ -1,10 +1,18 @@
-import { BoardEntity } from "src/app_modules/board/board.entity";
-import { CommentEntity } from "src/app_modules/comment/comment.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn, OneToOne } from "typeorm";
+import { BoardEntity } from 'src/app_modules/board/board.entity';
+import { CommentEntity } from 'src/app_modules/comment/comment.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  OneToOne,
+} from 'typeorm';
 
 // User.rank enum 필요
 
-@Entity({ name : 'User'})
+@Entity({ name: 'User' })
 export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -12,7 +20,7 @@ export class UserEntity {
   @Column({ name: 'username' })
   username: string;
 
-  @Column({ name: 'password' })
+  @Column({ name: 'password', select: false })
   password: string;
 
   @Column({ name: 'phone' })

@@ -5,22 +5,22 @@ import { CreateCommentlDTO } from './dto/create_comment.dto';
 
 @Controller('comment')
 export class CommentController extends AbstractController {
-    constructor(private readonly commentService: CommentService){
-        super();
-    }
+  constructor(private readonly commentService: CommentService) {
+    super();
+  }
 
-    @Get('board/:id')
-    async getCommentByBoard(){
-        
-    }
-    
-    @Get('user/:id')
-    async getCommentByUser() {
+  @Get('board/:id')
+  async getCommentByBoard() {}
 
-    }
+  @Get('user/:id')
+  async getCommentByUser() {}
 
-    @Post(':id')
-    async createComment(@Param('id') id: number, @Body() body: CreateCommentlDTO) {
-        const data = await this.commentService.createComment(id, body)
-    }
+  @Post(':id')
+  async createComment(
+    @Param('id') id: number,
+    @Body() body: CreateCommentlDTO,
+  ) {
+    const data = await this.commentService.createComment(id, body);
+    return this.makeResponse({ data });
+  }
 }
