@@ -17,7 +17,8 @@ export class CommentService {
     ){}
 
     async createComment(id:number, body:CreateCommentlDTO) {
-        //board_id, user_id(접속 유저)
+        // board_id, user_id(접속 유저)
+        // Test User 사용
         const user = await this.userService.getTestUser(1);
         const board = await this.boardService.getBoard(id);
 
@@ -33,6 +34,6 @@ export class CommentService {
         comment.board = board;
         comment.user = user;
         await this.commentRepository.save(comment);
-        return '댓글 완';
+        return '댓글 등록에 성공하였습니다.';
     }
 }

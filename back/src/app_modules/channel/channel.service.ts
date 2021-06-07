@@ -24,7 +24,7 @@ export class ChannelService {
   async getChannel(id: number) {
     return await this.channelRepositroy.findOne({
       where: { id: id },
-      relations: ['board', 'board.comment', 'board.comment.user'],
+      relations: ['board'],
     });
   }
   async createChannel(body: CreateChannelDTO) {
