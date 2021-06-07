@@ -1,6 +1,6 @@
 import { BoardEntity } from "src/app_modules/board/board.entity";
 import { UserEntity } from "src/app_modules/user/user.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 // Todo : 좋아요 ManyToMany 
 
@@ -11,6 +11,9 @@ export class CommentEntity {
 
   @Column()
   content: string;
+
+  @CreateDateColumn()
+  regdate: Date;
 
   @ManyToOne(() => BoardEntity, { onDelete: 'CASCADE' })
   @JoinColumn({

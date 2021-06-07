@@ -1,4 +1,13 @@
-import { Controller, Get, Query, Post, Body, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Query,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { ChannelService } from './channel.service';
 import { AbstractController } from 'src/common/abstract_controller';
 import { CreateChannelDTO } from './dto/careate_channel.dto';
@@ -6,6 +15,8 @@ import { SwaggerDecorators } from '../../common/decorators/swagger.decorator';
 import { ApiParam } from '@nestjs/swagger';
 import { RouterTag } from 'src/common/decorators/router_swagger_tag.decorator';
 import { SwaggerPagination } from 'src/common/decorators/pagination.decorator';
+import { SwaggerParameter } from 'src/common/decorators/parameter.decotrator';
+import { UpdateChannelDTO } from './dto/update_channel.dto';
 
 @RouterTag('channel')
 export class ChannelController extends AbstractController {
@@ -24,11 +35,8 @@ export class ChannelController extends AbstractController {
     return this.makeResponse({ data });
   }
 
-  @ApiParam({
-    type: Number,
-    name: 'id',
-  })
   @SwaggerDecorators('채널 정보')
+  @SwaggerParameter('Channel PK')
   @Get(':id')
   async getChannel(@Param('id') id: number) {
     const data = await this.channelService.getChannel(id);
@@ -39,6 +47,22 @@ export class ChannelController extends AbstractController {
   @Post()
   async createChannel(@Body() body: CreateChannelDTO) {
     const data = await this.channelService.createChannel(body);
+    return this.makeResponse({ data });
+  }
+
+  @SwaggerDecorators('채널 수정')
+  @SwaggerParameter('Channel PK')
+  @Put(':id')
+  async updateChannel(@Param('id') id: number, @Body() body: UpdateChannelDTO) {
+    const data = await this.channelService.updateChannel(id, body);
+    return this.makeResponse({ data });
+  }
+
+  @SwaggerDecorators('채널 삭제')
+  @SwaggerParameter('Channel PK')
+  @Delete(':id')
+  async deleteChannel(@Param('id') id: number) {
+    const data = await this.channelService.deleteChannel(id);
     return this.makeResponse({ data });
   }
 }

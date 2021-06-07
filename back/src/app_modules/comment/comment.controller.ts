@@ -1,4 +1,4 @@
-import { Get, Post, Param, Body } from '@nestjs/common';
+import { Get, Post, Param, Body, Query } from '@nestjs/common';
 import { AbstractController } from 'src/common/abstract_controller';
 import { SwaggerParameter } from 'src/common/decorators/parameter.decotrator';
 import { RouterTag } from 'src/common/decorators/router_swagger_tag.decorator';
@@ -15,7 +15,14 @@ export class CommentController extends AbstractController {
   @SwaggerDecorators('미완성')
   @SwaggerParameter('Board PK')
   @Get('board/:id')
-  async getCommentByBoard() {}
+  async getCommentByBoard(@Param('id') id: number, @Query() query) {
+    const data = await this.commentService.getCommentByBoard(
+      id,
+      query.page,
+      query.size,
+    );
+    return this.makeResponse({ data });
+  }
 
   @SwaggerDecorators('미완성')
   @SwaggerParameter('User PK')
