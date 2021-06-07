@@ -6,6 +6,7 @@ import { BoardService } from '../board/board.service';
 import { UserService } from '../user/user.service';
 import { CommentRepositroy } from './comment.repository';
 import { CreateCommentlDTO } from './dto/create_comment.dto';
+import { CommentEntity } from './comment.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class CommentService {
@@ -16,7 +17,7 @@ export class CommentService {
     public readonly userService: UserService,
   ) {}
 
-  async getCommentByBoard(id: number, page = 1, size = 100) {
+  async getCommentByBoard(id: number, page = 1, size = 100): Promise<CommentEntity[]> {
     const comment = await this.commentRepository.find({
       where: { board: id },
       skip: page,
@@ -27,7 +28,7 @@ export class CommentService {
     return comment;
   }
 
-  async createComment(id: number, body: CreateCommentlDTO) {
+  async createComment(id: number, body: CreateCommentlDTO): Promise<string> {
     // board_id, user_id(접속 유저)
     // Test User 사용
     const user = await this.userService.getTestUser(1);
