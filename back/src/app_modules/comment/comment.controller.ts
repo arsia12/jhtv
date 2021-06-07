@@ -1,5 +1,6 @@
 import { Get, Post, Param, Body } from '@nestjs/common';
 import { AbstractController } from 'src/common/abstract_controller';
+import { SwaggerParameter } from 'src/common/decorators/parameter.decotrator';
 import { RouterTag } from 'src/common/decorators/router_swagger_tag.decorator';
 import { SwaggerDecorators } from 'src/common/decorators/swagger.decorator';
 import { CommentService } from './comment.service';
@@ -11,16 +12,18 @@ export class CommentController extends AbstractController {
     super();
   }
 
-  
   @SwaggerDecorators('미완성')
+  @SwaggerParameter('Board PK')
   @Get('board/:id')
   async getCommentByBoard() {}
 
   @SwaggerDecorators('미완성')
+  @SwaggerParameter('User PK')
   @Get('user/:id')
   async getCommentByUser() {}
 
   @SwaggerDecorators('댓글 작성')
+  @SwaggerParameter('Board PK')
   @Post(':id')
   async createComment(
     @Param('id') id: number,
