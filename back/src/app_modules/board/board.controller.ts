@@ -42,6 +42,8 @@ export class BoardController extends AbstractController {
     return this.makeResponse({ data });
   }
 
+  @SwaggerDecorators('게시글 수정')
+  @SwaggerParameter('Board PK')
   @Put(':id')
   async updateBoard(@Param('id') id: number, @Body() body: UpdateBoardDTO) {
     const data = await this.boardService.updateBoard(id, body);
