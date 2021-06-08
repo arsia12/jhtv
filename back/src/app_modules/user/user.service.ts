@@ -14,4 +14,8 @@ export class UserService {
     async createUser(body : CreateUserDto) {
         await this.userRepository.save(body);
     }
+
+    async getTestUser(id: number){
+        return await this.userRepository.findOne(id);
+    }
 }

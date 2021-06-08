@@ -43,7 +43,6 @@ export class ConfigService {
         return entity;
       });
     }
-
     return {
       entities,
       keepConnectionAlive: true,
@@ -58,7 +57,7 @@ export class ConfigService {
           this.get('APP_ENV') === APP_ENV.DEV) &&
         typeof jest === 'undefined',
       migrationsRun: false,
-      synchronize: true,
+      synchronize: false,
     };
   }
 }

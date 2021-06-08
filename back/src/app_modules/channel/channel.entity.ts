@@ -1,6 +1,6 @@
 import { BoardEntity } from "src/app_modules/board/board.entity";
 import { UserEntity } from "src/app_modules/user/user.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, OneToOne, CreateDateColumn } from "typeorm";
 
 @Entity({name : 'Channel'})
 export class ChannelEntity {
@@ -10,11 +10,7 @@ export class ChannelEntity {
     @Column({name : 'name'})
     name : string;
 
-    @Column({name : 'user_id'})
-    user_id : number;
-
-    @Column({name : 'content',
-            type : 'text' })
+    @Column({name : 'content', type:'text'})
     content : string;
 
     @OneToMany(() => BoardEntity, (i) => i.channel, { cascade: true })
@@ -24,10 +20,12 @@ export class ChannelEntity {
     })
     board: BoardEntity[];
 
-    @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
+    @OneToOne(() => UserEntity, { onDelete: 'CASCADE' })
     @JoinColumn({
-        name: 'user_id',
-        referencedColumnName: 'id',
+        name:'user_id'
     })
     user: UserEntity;
+
+    @CreateDateColumn()
+    regdate: Date;
 }

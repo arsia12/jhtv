@@ -12,16 +12,16 @@ import { UserModule } from './user/user.module';
   imports: [
     TypeOrmModule.forRootAsync({
       imports: [
-        SharedModule , 
-        // AuthModule,
-        UserModule,
-        ChannelModule,
+        SharedModule,
+        //AuthModule,
         BoardModule,
+        ChannelModule,
         CommentModule,
+        UserModule,
       ],
       useFactory: (configService: ConfigService) => configService.typeOrmConfig,
       inject: [ConfigService],
-    })
+    }),
   ],
   controllers: [],
   providers: [],
