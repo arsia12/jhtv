@@ -104,7 +104,7 @@ export class BoardService {
     return board;
   }
 
-  async barodException(board: BoardEntity, owner): Promise<any> {
+  async barodException(board: BoardEntity, owner): Promise<void> {
     // Todo : 로그인 유저 처리
     const user = await this.userService.getTestUser(2);
 

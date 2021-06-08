@@ -94,11 +94,7 @@ export class ChannelService {
     return '채널이 삭제되었습니다.';
   }
 
-  async channelException(channel: ChannelEntity, owner: number): Promise<any> {
-    // 함수 타입을 Boolean 으로 해서 ture로 넘길지,
-    // any로 해서 return 을 넘기지 않을지 생각필요
-    // return이 필요하지 않은 함수로 생각해서 any?로 넘김(사실 any도 필요없음.).
-
+  async channelException(channel: ChannelEntity, owner: number): Promise<void> {
     // Todo : 로그인 유저 필요
     const user = await this.userService.getTestUser(2);
 
