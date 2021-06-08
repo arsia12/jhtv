@@ -33,15 +33,6 @@ export class CommentService {
     // Test User 사용
     const user = await this.userService.getTestUser(1);
     const board = await this.boardService.getBoard(id);
-
-    if (!board) {
-      throw new GlobalException({
-        statusCode: HttpStatus.NOT_FOUND,
-        responseCode: Number(`${HttpStatus.NOT_FOUND}00`),
-        msg: '존재하지 않는 게시글입니다.',
-      });
-    }
-
     const comment = await this.commentRepository.create(body);
     comment.board = board;
     comment.user = user;

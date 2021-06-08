@@ -7,11 +7,15 @@ import { GlobalException } from 'src/common/exceptions/global_exception';
 import { UserService } from '../user/user.service';
 import { ChannelEntity } from './channel.entity';
 import { UpdateChannelDTO } from './dto/update_channel.dto';
-
 // responseCode 정리
 // 40400 채널이 존재하지 않음.
 // 40900 아이디에 채널이 존재하는 경우.
 // 40901 삭제 or 수정하려는 채널이 채널 소유자가 아닐경우
+
+enum ownerCheck {
+  Y,
+  N,
+}
 
 @Injectable({ scope: Scope.REQUEST })
 export class ChannelService {
@@ -66,55 +70,56 @@ export class ChannelService {
 
   async updateChannel(id: number, body: UpdateChannelDTO): Promise<string> {
     const channel = await this.channelRepositroy.findOne({
-      where: {id: id},
-      relations: ['user']
+      where: { id: id },
+      relations: ['user'],
     });
-    
+
     // 예외처리 함수
-    await this.isChannel(channel);
-    
+    await this.channelException(channel, ownerCheck.Y);
+
     await this.channelRepositroy.update(id, body);
-    return '채널이 수정되었습니다.'
-    
+    return '채널이 수정되었습니다.';
   }
 
   async deleteChannel(id: number): Promise<string> {
     const channel = await this.channelRepositroy.findOne({
-      where: {id: id},
-      relations: ['user']
+      where: { id: id },
+      relations: ['user'],
     });
-    
+
     // 예외처리 함수
-    await this.isChannel(channel);
-    
+    await this.channelException(channel, ownerCheck.Y);
+
     await this.channelRepositroy.delete(id);
     return '채널이 삭제되었습니다.';
   }
 
-  async isChannel(channel: ChannelEntity): Promise<any>{
+  async channelException(channel: ChannelEntity, owner: number): Promise<any> {
     // 함수 타입을 Boolean 으로 해서 ture로 넘길지,
     // any로 해서 return 을 넘기지 않을지 생각필요
-    // return이 필요하지 않은 함수로 생각해서 any로 넘김.
+    // return이 필요하지 않은 함수로 생각해서 any?로 넘김(사실 any도 필요없음.).
 
-    // Todo : 로그인 유저 필요 
+    // Todo : 로그인 유저 필요
     const user = await this.userService.getTestUser(2);
-    
+
     // 채널이 존재하지 않을 경우 예외 처리
     if (!channel) {
       throw new GlobalException({
         statusCode: HttpStatus.NOT_FOUND,
         responseCode: Number(`${HttpStatus.NOT_FOUND}00`),
-        msg: '채널이 존재하지 않습니다.'
-      })
+        msg: '채널이 존재하지 않습니다.',
+      });
     }
 
     // 채널 소유자가 아닐 경우 예외 처리
-    if(channel.user.id != user.id){
-      throw new GlobalException({
-        statusCode: HttpStatus.CONFLICT,
-        responseCode: Number(`${HttpStatus.CONFLICT}01`),
-        msg: '채널의 소유자만 가능합니다.'
-      })
+    if (owner == 1) {
+      if (channel.user.id != user.id) {
+        throw new GlobalException({
+          statusCode: HttpStatus.CONFLICT,
+          responseCode: Number(`${HttpStatus.CONFLICT}01`),
+          msg: '채널의 소유자만 가능합니다.',
+        });
+      }
     }
   }
 }

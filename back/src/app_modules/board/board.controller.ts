@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Get,
-  Param,
-  Query,
-  Delete,
-} from '@nestjs/common';
+import { Post, Body, Get, Param, Query, Delete, Put } from '@nestjs/common';
 import { AbstractController } from 'src/common/abstract_controller';
 import { RouterTag } from 'src/common/decorators/router_swagger_tag.decorator';
 import { SwaggerDecorators } from 'src/common/decorators/swagger.decorator';
@@ -14,6 +6,7 @@ import { BoardService } from './board.service';
 import { CreateBoardDTO } from './dto/create_board.dto';
 import { SwaggerParameter } from 'src/common/decorators/parameter.decotrator';
 import { SwaggerPagination } from 'src/common/decorators/pagination.decorator';
+import { UpdateBoardDTO } from './dto/update_board.dto';
 
 @RouterTag('board')
 export class BoardController extends AbstractController {
@@ -46,6 +39,12 @@ export class BoardController extends AbstractController {
   @Post()
   async createBoard(@Body() body: CreateBoardDTO) {
     const data = await this.boardService.createBoard(body);
+    return this.makeResponse({ data });
+  }
+
+  @Put(':id')
+  async updateBoard(@Param('id') id: number, @Body() body: UpdateBoardDTO) {
+    const data = await this.boardService.updateBoard(id, body);
     return this.makeResponse({ data });
   }
 
