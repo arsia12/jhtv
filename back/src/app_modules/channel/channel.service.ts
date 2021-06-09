@@ -40,7 +40,7 @@ export class ChannelService {
   }
   async createChannel(body: CreateChannelDTO): Promise<string> {
     // Todo : 로그인한 유저 pk (현재는 Test 유저)
-    const user = await this.userService.getTestUser(2);
+    const user = await this.userService.getUserInfo(2);
 
     const channel = await this.channelRepositroy.findOne({
       where: { user: user },
@@ -96,7 +96,7 @@ export class ChannelService {
 
   async channelException(channel: ChannelEntity, owner: number): Promise<void> {
     // Todo : 로그인 유저 필요
-    const user = await this.userService.getTestUser(2);
+    const user = await this.userService.getUserInfo(2);
 
     // 채널이 존재하지 않을 경우 예외 처리
     if (!channel) {

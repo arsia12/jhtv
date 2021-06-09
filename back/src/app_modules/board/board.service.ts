@@ -49,7 +49,7 @@ export class BoardService {
   }
   async createBoard(body: CreateBoardDTO): Promise<string> {
     // Todo : 로그인 아이디 필요 (현재 test용 아이디)
-    const user = await this.userService.getTestUser(2);
+    const user = await this.userService.getUserInfo(2);
     const data = await this.channelService.getChannelByUser(user.id);
 
     // 채널 예외처리
@@ -106,7 +106,7 @@ export class BoardService {
 
   async barodException(board: BoardEntity, owner): Promise<void> {
     // Todo : 로그인 유저 처리
-    const user = await this.userService.getTestUser(2);
+    const user = await this.userService.getUserInfo(2);
 
     // 게시글 존재 예외처리
     if (!board) {
