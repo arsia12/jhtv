@@ -7,6 +7,7 @@ import { GlobalException } from 'src/common/exceptions/global_exception';
 import { UserService } from '../user/user.service';
 import { ChannelEntity } from './channel.entity';
 import { UpdateChannelDTO } from './dto/update_channel.dto';
+import { UserEntity } from '../user/user.entity';
 
 // responseCode 정리
 // 40400 채널이 존재하지 않음.
@@ -30,10 +31,11 @@ export class ChannelService {
   ) {}
 
   async getChannelList(page = 1, size = 100): Promise<ChannelEntity[]> {
-    return await this.channelRepositroy.find({
-      skip: page,
+    const data = await this.channelRepositroy.find({
+      skip: (page - 1) * size,
       take: size,
     });
+    return data;
   }
 
   async getChannel(id: number): Promise<ChannelEntity> {
@@ -42,14 +44,14 @@ export class ChannelService {
       relations: ['board'],
     });
   }
+
   async createChannel(body: CreateChannelDTO): Promise<string> {
-    // Todo : 로그인한 유저 pk (현재는 Test 유저)
-    const user = await this.userService.getTestUser(2);
+    const user = await this.userService.getLoginUser(this.request.user['id']);
 
     const channel = await this.channelRepositroy.findOne({
       where: { user: user },
     });
-
+    // Todo : 채널명 유니크
     if (channel) {
       throw new GlobalException({
         statusCode: HttpStatus.CONFLICT,
@@ -73,26 +75,30 @@ export class ChannelService {
   }
 
   async updateChannel(id: number, body: UpdateChannelDTO): Promise<string> {
+    const user = await this.userService.getLoginUser(this.request.user['id']);
+    
     const channel = await this.channelRepositroy.findOne({
       where: { id: id },
       relations: ['user'],
     });
 
     // 예외처리 함수
-    await this.channelException(channel, ownerCheck.Y);
+    await this.channelException(channel, ownerCheck.Y, user);
 
     await this.channelRepositroy.update(id, body);
     return '채널이 수정되었습니다.';
   }
 
   async deleteChannel(id: number): Promise<string> {
+    const user = await this.userService.getLoginUser(this.request.user['id']);
+    
     const channel = await this.channelRepositroy.findOne({
       where: { id: id },
       relations: ['user'],
     });
 
     // 예외처리 함수
-    await this.channelException(channel, ownerCheck.Y);
+    await this.channelException(channel, ownerCheck.Y, user);
 
     await this.channelRepositroy.delete(id);
     return '채널이 삭제되었습니다.';
@@ -101,7 +107,7 @@ export class ChannelService {
   async createSubscribe(id: number): Promise<string> {
     // Todo : 로그인 유저 필요 / 로그인 유저 가져오는 함수가 있으면 좋을거 같음.
     // request 유저가 UserEntity인지 확인 필요.
-    const user = await this.userService.getTestUser(1);
+    const user = await this.userService.getLoginUser(this.request.user['id']);
     const channel = await this.channelRepositroy.findOne({
       where: { id: id },
     });
@@ -145,7 +151,7 @@ export class ChannelService {
   }
 
   async deleteSubscribe(id: number): Promise<string> {
-    const user = await this.userService.getTestUser(1);
+    const user = await this.userService.getLoginUser(this.request.user['id']);
     const channel = await this.channelRepositroy.findOne({
       where: { id: id },
     });
@@ -170,9 +176,7 @@ export class ChannelService {
     return '구독을 취소하였습니다.';
   }
 
-  async channelException(channel: ChannelEntity, owner: number): Promise<void> {
-    // Todo : 로그인 유저 필요
-    const user = await this.userService.getTestUser(1);
+  async channelException(channel: ChannelEntity, owner: number, user?: UserEntity): Promise<void> {
     // 채널이 존재하지 않을 경우 예외 처리
     if (!channel) {
       throw new GlobalException({

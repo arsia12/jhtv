@@ -1,4 +1,4 @@
-import { Post, Body, Get, Param, Query, Delete, Put } from '@nestjs/common';
+import { Post, Body, Get, Param, Query, Delete, Put, UseGuards } from '@nestjs/common';
 import { AbstractController } from 'src/common/abstract_controller';
 import { RouterTag } from 'src/common/decorators/router_swagger_tag.decorator';
 import { SwaggerDecorators } from 'src/common/decorators/swagger.decorator';
@@ -7,6 +7,8 @@ import { CreateBoardDTO } from './dto/create_board.dto';
 import { SwaggerParameter } from 'src/common/decorators/parameter.decotrator';
 import { SwaggerPagination } from 'src/common/decorators/pagination.decorator';
 import { UpdateBoardDTO } from './dto/update_board.dto';
+import { AuthGuard } from 'src/common/guards/auth.guard';
+import { AuthGuardWithAnonymous } from 'src/common/guards/auth_anonymous.guard';
 
 @RouterTag('board')
 export class BoardController extends AbstractController {
@@ -14,6 +16,7 @@ export class BoardController extends AbstractController {
     super();
   }
 
+  @UseGuards(AuthGuardWithAnonymous)
   @SwaggerDecorators('채널 게시글')
   @SwaggerParameter('Channel PK')
   @SwaggerPagination(1, 100)
@@ -27,6 +30,7 @@ export class BoardController extends AbstractController {
     return this.makeResponse({ data });
   }
 
+  @UseGuards(AuthGuardWithAnonymous)
   @SwaggerDecorators('게시글 디테일')
   @SwaggerParameter('Board PK')
   @Get('detail/:id')
@@ -35,6 +39,7 @@ export class BoardController extends AbstractController {
     return this.makeResponse({ data });
   }
 
+  @UseGuards(AuthGuard)
   @SwaggerDecorators('게시글 작성')
   @Post()
   async createBoard(@Body() body: CreateBoardDTO) {
@@ -42,6 +47,7 @@ export class BoardController extends AbstractController {
     return this.makeResponse({ data });
   }
 
+  @UseGuards(AuthGuard)
   @SwaggerDecorators('게시글 수정')
   @SwaggerParameter('Board PK')
   @Put(':id')
@@ -50,6 +56,7 @@ export class BoardController extends AbstractController {
     return this.makeResponse({ data });
   }
 
+  @UseGuards(AuthGuard)
   @SwaggerDecorators('게시글 삭제')
   @SwaggerParameter('Board PK')
   @Delete(':id')
@@ -58,6 +65,7 @@ export class BoardController extends AbstractController {
     return this.makeResponse({ data });
   }
 
+  @UseGuards(AuthGuard)
   @SwaggerDecorators('게시글 좋아요')
   @SwaggerParameter('Board PK')
   @Post('like/:id')
@@ -66,6 +74,7 @@ export class BoardController extends AbstractController {
     return this.makeResponse({ data });
   }
 
+  @UseGuards(AuthGuard)
   @SwaggerDecorators('게시글 좋아요 취소')
   @SwaggerParameter('Board PK')
   @Delete('like/:id')

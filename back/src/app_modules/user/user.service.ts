@@ -18,10 +18,10 @@ export class UserService {
 
   //로그인시 아이디 유무 확인
   async existUsername(username: string) {
-    return await this.userRepository.findOne({ where: { username: username }, select: ['username', 'password'] });
+    return await this.userRepository.findOne({ where: { username: username }, select: ['id', 'username', 'password'] });
   }
 
-  async getTestUser(id: number) {
+  async getLoginUser(id: number) {
     return await this.userRepository.findOne(id);
   }
 }

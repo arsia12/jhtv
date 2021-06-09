@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { ChannelService } from './channel.service';
 import { AbstractController } from 'src/common/abstract_controller';
@@ -16,6 +17,8 @@ import { RouterTag } from 'src/common/decorators/router_swagger_tag.decorator';
 import { SwaggerPagination } from 'src/common/decorators/pagination.decorator';
 import { SwaggerParameter } from 'src/common/decorators/parameter.decotrator';
 import { UpdateChannelDTO } from './dto/update_channel.dto';
+import { AuthGuard } from 'src/common/guards/auth.guard';
+import { AuthGuardWithAnonymous } from 'src/common/guards/auth_anonymous.guard';
 
 @RouterTag('channel')
 export class ChannelController extends AbstractController {
@@ -23,6 +26,7 @@ export class ChannelController extends AbstractController {
     super();
   }
 
+  @UseGuards(AuthGuardWithAnonymous)
   @SwaggerDecorators('채널 전체 리스트')
   @SwaggerPagination(1, 100)
   @Get()
@@ -31,9 +35,11 @@ export class ChannelController extends AbstractController {
       query.page,
       query.size,
     );
+    console.log(data);
     return this.makeResponse({ data });
   }
 
+  @UseGuards(AuthGuardWithAnonymous)
   @SwaggerDecorators('채널 정보')
   @SwaggerParameter('Channel PK')
   @Get(':id')
@@ -42,6 +48,7 @@ export class ChannelController extends AbstractController {
     return this.makeResponse({ data });
   }
 
+  @UseGuards(AuthGuard)
   @SwaggerDecorators('채널 생성')
   @Post()
   async createChannel(@Body() body: CreateChannelDTO) {
@@ -49,6 +56,7 @@ export class ChannelController extends AbstractController {
     return this.makeResponse({ data });
   }
 
+  @UseGuards(AuthGuard)
   @SwaggerDecorators('채널 수정')
   @SwaggerParameter('Channel PK')
   @Put(':id')
@@ -57,6 +65,7 @@ export class ChannelController extends AbstractController {
     return this.makeResponse({ data });
   }
 
+  @UseGuards(AuthGuard)
   @SwaggerDecorators('채널 삭제')
   @SwaggerParameter('Channel PK')
   @Delete(':id')
@@ -65,6 +74,7 @@ export class ChannelController extends AbstractController {
     return this.makeResponse({ data });
   }
 
+  @UseGuards(AuthGuard)
   @SwaggerDecorators('채널 구독')
   @SwaggerParameter('Channel PK')
   @Post('subscribe/:id')
@@ -73,6 +83,7 @@ export class ChannelController extends AbstractController {
     return this.makeResponse({ data });
   }
 
+  @UseGuards(AuthGuard)
   @SwaggerDecorators('구독 취소')
   @SwaggerParameter('Channel PK')
   @Delete('subscribe/:id')
