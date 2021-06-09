@@ -1,5 +1,5 @@
-import { BoardEntity } from 'src/app_modules/board/board.entity';
-import { CommentEntity } from 'src/app_modules/comment/comment.entity';
+import { BoardEntity, LikeBoardEntity } from 'src/app_modules/board/board.entity';
+import { CommentEntity, LikeCommentEntity } from 'src/app_modules/comment/comment.entity';
 import {
   Column,
   CreateDateColumn,
@@ -7,10 +7,10 @@ import {
   JoinColumn,
   OneToMany,
   PrimaryGeneratedColumn,
-  OneToOne,
   BeforeInsert,
 } from 'typeorm';
 import { bcrypt } from 'bcrypt';
+import { SubscribeEntity } from '../channel/channel.entity';
 
 // User.rank enum 필요
 
@@ -57,6 +57,27 @@ export class UserEntity {
   // @OneToOne(() => ChannelEntity, (i) => i.user, { cascade: true })
   // @JoinColumn()
   // channel: ChannelEntity;
+
+  @OneToMany(() => SubscribeEntity, (i) => i.user, { cascade: true })
+  @JoinColumn({
+    name: 'id',
+    referencedColumnName: 'user_id',
+  })
+  subscribe: SubscribeEntity[];
+
+  @OneToMany(() => LikeBoardEntity, (i) => i.user, { cascade: true })
+  @JoinColumn({
+    name: 'id',
+    referencedColumnName: 'user_id',
+  })
+  like_board: LikeBoardEntity[];
+
+  @OneToMany(() => LikeCommentEntity, (i) => i.user, { cascade: true })
+  @JoinColumn({
+    name: 'id',
+    referencedColumnName: 'user_id',
+  })
+  like_comment: LikeCommentEntity[];
 
   @BeforeInsert()
     async userEncryption(){

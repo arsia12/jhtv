@@ -53,4 +53,20 @@ export class CommentController extends AbstractController {
     const data = await this.commentService.deleteComment(id);
     return this.makeResponse({ data });
   }
+
+  @SwaggerDecorators('댓글 좋아요')
+  @SwaggerParameter('Comment PK')
+  @Post('like/:id')
+  async createLikeComment(@Param('id') id: number) {
+    const data = await this.commentService.createLikeComment(id);
+    return this.makeResponse({ data });
+  }
+
+  @SwaggerDecorators('댓글 좋아요 취소')
+  @SwaggerParameter('Comment PK')
+  @Delete('like/:id')
+  async deleteLikeComment(@Param('id') id: number) {
+    const data = await this.commentService.deleteLikeComment(id);
+    return this.makeResponse({ data })
+  }
 }
