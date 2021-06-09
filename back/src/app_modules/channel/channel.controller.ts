@@ -12,7 +12,6 @@ import { ChannelService } from './channel.service';
 import { AbstractController } from 'src/common/abstract_controller';
 import { CreateChannelDTO } from './dto/careate_channel.dto';
 import { SwaggerDecorators } from '../../common/decorators/swagger.decorator';
-import { ApiParam } from '@nestjs/swagger';
 import { RouterTag } from 'src/common/decorators/router_swagger_tag.decorator';
 import { SwaggerPagination } from 'src/common/decorators/pagination.decorator';
 import { SwaggerParameter } from 'src/common/decorators/parameter.decotrator';
