@@ -43,7 +43,7 @@ export class CommentService {
 
   async createComment(id: number, body: CreateCommentlDTO): Promise<string> {
     // Todo : 접속 유저로 변경
-    const user = await this.userService.getUserInfo(2);
+    const user = await this.userService.getTestUser(2);
 
     const board = await this.boardService.getBoard(id);
 
@@ -133,7 +133,7 @@ export class CommentService {
 
   async commentException(comment: CommentEntity, owner: number): Promise<void> {
     // Todo : 로그인 유저 필요
-    const user = await this.userService.getUserInfo(2);
+    const user = await this.userService.getTestUser(2);
 
     // 댓글이 존재하지 않을 경우 예외 처리
     if (!comment) {

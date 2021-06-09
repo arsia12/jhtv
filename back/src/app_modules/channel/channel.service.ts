@@ -44,7 +44,7 @@ export class ChannelService {
   }
   async createChannel(body: CreateChannelDTO): Promise<string> {
     // Todo : 로그인한 유저 pk (현재는 Test 유저)
-    const user = await this.userService.getUserInfo(2);
+    const user = await this.userService.getTestUser(2);
 
     const channel = await this.channelRepositroy.findOne({
       where: { user: user },
