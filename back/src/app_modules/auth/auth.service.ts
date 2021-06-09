@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
 import { UserLoginDto } from './dto/user_login.dto';
-
+import * as bcrypt from 'bcrypt';
 @Injectable()
 export class AuthService {
     constructor(
@@ -11,7 +11,42 @@ export class AuthService {
     ) {}
 
     async validateUser(body : UserLoginDto) : Promise<any>{
-        console.log(body.username);
-        const user = await this.userService
+        const user = await this.userService.existUsername(body.username);
+
+        console.log(user.password);
+        if(!user){
+            throw new NotFoundException({
+                status : HttpStatus.NOT_FOUND,
+                error : '존재하지 않는 유저 입니다.',
+            })
+        }
+
+        const isPasswordValid = this.validateHash(
+            body.password,
+            user && user.password,
+        );
+
+        if (isPasswordValid){
+            const { password, ...result } = user;
+            return result;
+        } else { 
+            throw new BadRequestException({
+                status : HttpStatus.BAD_REQUEST,
+                error : '사용자 정보가 올바르지 않습니다.',
+            })
+        }
+        // return null;
+    }
+
+    async login(user : any){
+        const payload = { username : user.username, sub : user.id };
+        return {
+            access_token : this.jwtService.sign(payload),
+        };
+    }
+
+    async validateHash(password : string, hash : string ) : Promise<boolean> {
+        hash = await hash.replace('$2y$', '$2a$');
+        return bcrypt.compare(password, hash || '');
     }
  }

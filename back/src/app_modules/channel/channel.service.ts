@@ -7,7 +7,6 @@ import { GlobalException } from 'src/common/exceptions/global_exception';
 import { UserService } from '../user/user.service';
 import { ChannelEntity } from './channel.entity';
 import { UpdateChannelDTO } from './dto/update_channel.dto';
-import * as _ from 'lodash';
 
 // responseCode 정리
 // 40400 채널이 존재하지 않음.
