@@ -64,4 +64,20 @@ export class ChannelController extends AbstractController {
     const data = await this.channelService.deleteChannel(id);
     return this.makeResponse({ data });
   }
+
+  @SwaggerDecorators('채널 구독')
+  @SwaggerParameter('Channel PK')
+  @Post('subscribe/:id')
+  async createSubscribe(@Param('id') id: number) {
+    const data = await this.channelService.createSubscribe(id);
+    return this.makeResponse({ data });
+  }
+
+  @SwaggerDecorators('구독 취소')
+  @SwaggerParameter('Channel PK')
+  @Delete('subscribe/:id')
+  async deleteSubscribe(@Param('id') id: number) {
+    const data = await this.channelService.deleteSubscribe(id);
+    return this.makeResponse({ data })
+  }
 }

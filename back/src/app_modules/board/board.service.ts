@@ -1,5 +1,5 @@
 import { Injectable, Scope, Inject, HttpStatus } from '@nestjs/common';
-import { BoardRepositroy } from './board.repository';
+import { BoardRepositroy, LikeBoardRepository } from './board.repository';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { CreateBoardDTO } from './dto/create_board.dto';
@@ -24,6 +24,7 @@ export class BoardService {
   constructor(
     @Inject(REQUEST) private readonly request: Request,
     public readonly boardRepository: BoardRepositroy,
+    public readonly likeBoardRepository: LikeBoardRepository,
     public readonly channelService: ChannelService,
     public readonly userService: UserService,
   ) {}
@@ -94,6 +95,57 @@ export class BoardService {
     return '게시글이 삭제되었습니다.';
   }
 
+  async createLikeBoard(id: number): Promise<string> {
+    const user = await this.userService.getTestUser(2);
+    const board = await this.boardRepository.findOne(id);
+
+    await this.barodException(board, ownerCheck.N);
+
+    const like_board = await this.likeBoardRepository.findOne({
+      where: { board: board.id, user: user.id },
+    });
+
+    if (like_board) {
+      throw new GlobalException({
+        statusCode: HttpStatus.CONFLICT,
+        responseCode: Number(`${HttpStatus.CONFLICT}12`),
+        msg: '이미 좋아요한 개시글입니다.',
+      });
+    }
+
+    const like = await this.likeBoardRepository.create();
+
+    like.board = board;
+    like.user = user;
+
+    await this.likeBoardRepository.save(like);
+
+    return '게시글을 좋아합니다.';
+  }
+
+  async deleteLikeBoard(id: number): Promise<string> {
+    const user = await this.userService.getTestUser(2);
+    const board = await this.boardRepository.findOne(id);
+
+    await this.barodException(board, ownerCheck.N);
+
+    const like_board = await this.likeBoardRepository.findOne({
+      where: { board: board.id, user: user.id },
+    });
+
+    if (!like_board) {
+      throw new GlobalException({
+        statusCode: HttpStatus.CONFLICT,
+        responseCode: Number(`${HttpStatus.CONFLICT}13`),
+        msg: '좋아요를 하지 않은 게시글입니다.',
+      });
+    }
+
+    await this.likeBoardRepository.delete(like_board.id);
+
+    return '게시글 좋아요를 취소했습니다.';
+  }
+
   // 사용하는 곳 2곳
   async getBoard(id: number): Promise<BoardEntity> {
     const board = await this.boardRepository.findOne(id);
@@ -117,7 +169,7 @@ export class BoardService {
       });
     }
     // 글쓴이 예외처리
-    if (owner == 1) {
+    if (owner == 0) {
       if (board.user.id != user.id) {
         throw new GlobalException({
           statusCode: HttpStatus.CONFLICT,
