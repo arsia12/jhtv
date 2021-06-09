@@ -37,7 +37,7 @@ export class UserEntity {
   @CreateDateColumn()
   regdate: Date;
 
-  @Column({ name: 'rank' })
+  @Column({ name: 'rank', default: 1 })
   rank: number;
 
   @OneToMany(() => BoardEntity, (i) => i.user, { cascade: true })

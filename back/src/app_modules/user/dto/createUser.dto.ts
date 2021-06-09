@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsNotEmpty, IsString, IS_DATE } from "class-validator";
+import { IsDate, IsNotEmpty, IsNumber, IsString, IS_DATE } from "class-validator";
 
 export class CreateUserDto {
     @IsNotEmpty()
@@ -26,7 +26,4 @@ export class CreateUserDto {
     @IsNotEmpty()
     @ApiProperty()
     readonly nickname : string;
-
-    @IsDate()
-    readonly regdate : Date;
 }
