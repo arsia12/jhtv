@@ -24,7 +24,7 @@ export class AuthService {
         }
         // 이 부분이 언디파인드 떳던 건 UserEntity password가 select = false
         // existUsername 함수에서 select로 비밀번호 가져오는 것으로 해결
-        console.log(user.password);
+
         
         // 비밀번호가 틀려도 토큰이 발급됐던 이유는 validateHash 비동기처리
         const isPasswordValid = await this.validateHash(
@@ -34,7 +34,7 @@ export class AuthService {
 
         if (isPasswordValid){
             const { password, ...result } = user;
-            return await this.login(result);;
+            return await this.login(result);
         } else { 
             throw new GlobalException({
                 statusCode : HttpStatus.BAD_REQUEST,
@@ -45,10 +45,10 @@ export class AuthService {
         // return null;
     }
 
-    async login(user : any): Promise<object>{
-        const payload = { username : user.username, sub : user.id };
+    async login(user : any): Promise<any>{
+        const payload = { id : user.id, username : user.username };
         return {
-            access_token : this.jwtService.sign(payload),
+            access_token : await this.jwtService.signAsync(payload),
         };
     }
 

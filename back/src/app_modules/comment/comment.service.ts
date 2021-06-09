@@ -8,6 +8,7 @@ import { CommentRepositroy, LikeCommentRepository } from './comment.repository';
 import { CreateCommentlDTO } from './dto/create_comment.dto';
 import { CommentEntity } from './comment.entity';
 import { UpdateCommentDTO } from './dto/update_comment.dto';
+import { UserEntity } from '../user/user.entity';
 
 enum ownerCheck {
   Y,
@@ -33,7 +34,7 @@ export class CommentService {
 
     const comment = await this.commentRepository.find({
       where: { board: board.id },
-      skip: page,
+      skip: (page - 1) * size,
       take: size,
       relations: ['user'],
     });
@@ -43,7 +44,7 @@ export class CommentService {
 
   async createComment(id: number, body: CreateCommentlDTO): Promise<string> {
     // Todo : 접속 유저로 변경
-    const user = await this.userService.getTestUser(2);
+    const user = await this.userService.getLoginUser(this.request.user['id']);
 
     const board = await this.boardService.getBoard(id);
 
@@ -57,33 +58,34 @@ export class CommentService {
   }
 
   async updateComment(id: number, body: UpdateCommentDTO): Promise<string> {
-    
+    const user = await this.userService.getLoginUser(this.request.user['id']);
     const comment = await this.commentRepository.findOne({
       where: { id: id },
       relations: ['user'],
     });
 
     // 예외처리
-    await this.commentException(comment, ownerCheck.Y);
+    await this.commentException(comment, ownerCheck.Y, user);
     await this.commentRepository.update(id, body);
     return '댓글이 수정되었습니다.'
   }
 
   async deleteComment(id: number): Promise<string> {
+    const user = await this.userService.getLoginUser(this.request.user['id']);
     const comment = await this.commentRepository.findOne({
       where: { id: id },
       relations: ['user'],
     });
 
     // 예외처리
-    await this.commentException(comment, ownerCheck.Y);
+    await this.commentException(comment, ownerCheck.Y, user);
     await this.commentRepository.delete(id);
     return '댓글이 삭제되었습니다.';
   }
 
 
   async createLikeComment(id: number): Promise<string> {
-    const user = await this.userService.getTestUser(2);
+    const user = await this.userService.getLoginUser(this.request.user['id']);
     const comment = await this.commentRepository.findOne(id);
 
     await this.commentException(comment, ownerCheck.N);
@@ -110,7 +112,7 @@ export class CommentService {
   }
 
   async deleteLikeComment(id: number): Promise<string> {    
-    const user = await this.userService.getTestUser(2);
+    const user = await this.userService.getLoginUser(this.request.user['id']);
     const comment = await this.commentRepository.findOne(id);
 
     await this.commentException(comment, ownerCheck.N);
@@ -131,10 +133,8 @@ export class CommentService {
     return '댓글 좋아요를 취소했습니다.'
   }
 
-  async commentException(comment: CommentEntity, owner: number): Promise<void> {
-    // Todo : 로그인 유저 필요
-    const user = await this.userService.getTestUser(2);
-
+  async commentException(comment: CommentEntity, owner: number, user?: UserEntity): Promise<void> {
+    
     // 댓글이 존재하지 않을 경우 예외 처리
     if (!comment) {
       throw new GlobalException({
