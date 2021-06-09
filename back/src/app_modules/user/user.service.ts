@@ -12,7 +12,7 @@ export class UserService {
     ){}
 
     async createUser(body : CreateUserDto) {
-        await this.userRepository.save(body);
+        await this.userRepository.save(this.userRepository.create(body));
     }
 
     async getTestUser(id: number){

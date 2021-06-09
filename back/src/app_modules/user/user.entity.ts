@@ -9,10 +9,13 @@ import {
   PrimaryGeneratedColumn,
   OneToOne,
   BeforeInsert,
+  BeforeUpdate,
 } from 'typeorm';
-import { bcrypt } from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 
 // User.rank enum 필요
+
+const BCRYPT_ROUND = 10;
 
 @Entity({ name: 'User' })
 export class UserEntity {
@@ -58,12 +61,15 @@ export class UserEntity {
   // @JoinColumn()
   // channel: ChannelEntity;
 
-  @BeforeInsert()
-    async userEncryption(){
-        this.password = await bcrypt.hash(this.password, 5);
-    }
+  private hashPassword(password : string) : Promise<string> {
+    return bcrypt.hash(password, BCRYPT_ROUND);
+  }
 
-    comparePassword(password: string): boolean {
-      return bcrypt.compare(password, this.password);
+  @BeforeInsert()
+  async savePassword() : Promise<void> {
+    if(this.password) { 
+      const hashedPassword = await this.hashPassword(this.password);
+      this.password = hashedPassword;
     }
+  }
 }
