@@ -1,9 +1,8 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
 import { UserLoginDto } from './dto/user_login.dto';
 import * as bcrypt from 'bcrypt';
-import { GlobalException } from 'src/common/exceptions/global_exception';
 @Injectable()
 export class AuthService {
     constructor(
@@ -31,10 +30,9 @@ export class AuthService {
             const { password, ...result } = user;
             return result;
         } else { 
-            throw new GlobalException({
-                statusCode : HttpStatus.BAD_REQUEST,
-                responseCode : Number(`${HttpStatus.BAD_REQUEST}00`),
-                msg : '사용자 정보가 올바르지 않습니다.'
+            throw new BadRequestException({
+                status : HttpStatus.BAD_REQUEST,
+                error : '사용자 정보가 올바르지 않습니다.',
             })
         }
         // return null;
