@@ -12,7 +12,6 @@ import { ChannelService } from './channel.service';
 import { AbstractController } from 'src/common/abstract_controller';
 import { CreateChannelDTO } from './dto/careate_channel.dto';
 import { SwaggerDecorators } from '../../common/decorators/swagger.decorator';
-import { ApiParam } from '@nestjs/swagger';
 import { RouterTag } from 'src/common/decorators/router_swagger_tag.decorator';
 import { SwaggerPagination } from 'src/common/decorators/pagination.decorator';
 import { SwaggerParameter } from 'src/common/decorators/parameter.decotrator';
@@ -64,5 +63,21 @@ export class ChannelController extends AbstractController {
   async deleteChannel(@Param('id') id: number) {
     const data = await this.channelService.deleteChannel(id);
     return this.makeResponse({ data });
+  }
+
+  @SwaggerDecorators('채널 구독')
+  @SwaggerParameter('Channel PK')
+  @Post('subscribe/:id')
+  async createSubscribe(@Param('id') id: number) {
+    const data = await this.channelService.createSubscribe(id);
+    return this.makeResponse({ data });
+  }
+
+  @SwaggerDecorators('구독 취소')
+  @SwaggerParameter('Channel PK')
+  @Delete('subscribe/:id')
+  async deleteSubscribe(@Param('id') id: number) {
+    const data = await this.channelService.deleteSubscribe(id);
+    return this.makeResponse({ data })
   }
 }
