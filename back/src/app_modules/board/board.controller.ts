@@ -57,4 +57,20 @@ export class BoardController extends AbstractController {
     const data = await this.boardService.deleteBoard(id);
     return this.makeResponse({ data });
   }
+
+  @SwaggerDecorators('게시글 좋아요')
+  @SwaggerParameter('Board PK')
+  @Post('like/:id')
+  async createLikeBoard(@Param('id') id: number) {
+    const data = await this.boardService.createLikeBoard(id);
+    return this.makeResponse({ data });
+  }
+
+  @SwaggerDecorators('게시글 좋아요 취소')
+  @SwaggerParameter('Board PK')
+  @Delete('like/:id')
+  async deleteLikeBoard(@Param('id') id: number) {
+    const data = await this.boardService.deleteLikeBoard(id);
+    return this.makeResponse({ data })
+  }
 }

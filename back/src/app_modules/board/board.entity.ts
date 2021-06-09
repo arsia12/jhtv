@@ -51,4 +51,34 @@ export class BoardEntity {
     referencedColumnName: 'id',
   })
   channel: ChannelEntity;
+
+  @OneToMany(() => LikeBoardEntity, (i) => i.board, { cascade: true })
+  @JoinColumn({
+    name: 'id',
+    referencedColumnName: 'channel_id',
+  })
+  subscribe: LikeBoardEntity[];
+}
+
+@Entity({ name: 'Board_User'})
+export class LikeBoardEntity {
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @ManyToOne(() => BoardEntity, { onDelete: 'CASCADE' })
+    @JoinColumn({
+      name: 'board_id',
+      referencedColumnName: 'id',
+    })
+    board: BoardEntity;
+
+    @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
+    @JoinColumn({
+      name: 'user_id',
+      referencedColumnName: 'id',
+    })
+    user: UserEntity;
+
+    @CreateDateColumn()
+    regdate: Date;
 }
