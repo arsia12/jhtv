@@ -4,7 +4,7 @@ import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGenerat
 
 // Todo : 좋아요 ManyToMany 
 
-@Entity({ name : 'comment'})
+@Entity({ name : 'Comment'})
 export class CommentEntity {
   @PrimaryGeneratedColumn()
   id: number;

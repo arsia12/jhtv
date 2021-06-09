@@ -8,7 +8,9 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   OneToOne,
+  BeforeInsert,
 } from 'typeorm';
+import { bcrypt } from 'bcrypt';
 
 // User.rank enum 필요
 
@@ -32,10 +34,10 @@ export class UserEntity {
   @Column({ name: 'nickname' })
   nickname: string;
 
-  @CreateDateColumn({ name: 'regdate', nullable: true })
+  @CreateDateColumn()
   regdate: Date;
 
-  @Column({ name: 'rank' })
+  @Column({ name: 'rank', default: 1 })
   rank: number;
 
   @OneToMany(() => BoardEntity, (i) => i.user, { cascade: true })
@@ -55,4 +57,13 @@ export class UserEntity {
   // @OneToOne(() => ChannelEntity, (i) => i.user, { cascade: true })
   // @JoinColumn()
   // channel: ChannelEntity;
+
+  @BeforeInsert()
+    async userEncryption(){
+        this.password = await bcrypt.hash(this.password, 5);
+    }
+
+    comparePassword(password: string): boolean {
+      return bcrypt.compare(password, this.password);
+    }
 }

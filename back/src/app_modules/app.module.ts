@@ -5,8 +5,8 @@ import { SharedModule } from 'src/shared_modules/shared.module';
 import { AuthModule } from './auth/auth.module';
 import { BoardModule } from './board/board.module';
 import { ChannelModule } from './channel/channel.module';
-import { UserModule } from './user/user.module';
 import { CommentModule } from './comment/comment.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
