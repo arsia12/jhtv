@@ -34,7 +34,7 @@ export class UserEntity {
   @Column({ name: 'nickname' })
   nickname: string;
 
-  @CreateDateColumn({ name: 'regdate', nullable: true })
+  @CreateDateColumn()
   regdate: Date;
 
   @Column({ name: 'rank' })
@@ -61,5 +61,9 @@ export class UserEntity {
   @BeforeInsert()
     async userEncryption(){
         this.password = await bcrypt.hash(this.password, 5);
+    }
+
+    comparePassword(password: string): boolean {
+      return bcrypt.compare(password, this.password);
     }
 }
