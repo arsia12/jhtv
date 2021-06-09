@@ -122,7 +122,7 @@ export class CommentService {
     if (!like_comment) {
       throw new GlobalException({
         statusCode: HttpStatus.CONFLICT,
-        responseCode: Number(`${HttpStatus.CONFLICT}13`),
+        responseCode: Number(`${HttpStatus.CONFLICT}23`),
         msg: '좋아요를 하지 않은 댓글입니다.',
       });
     }
