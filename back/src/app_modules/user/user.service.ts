@@ -22,7 +22,7 @@ export class UserService {
         return await this.userRepository.findOne({username : username});
     }
 
-    async getUserInfo(id : number){
+    async getTestUser(id : number){
         return await this.userRepository.findOne(id);
     }
 }
