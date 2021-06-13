@@ -8,6 +8,7 @@ import { UserService } from '../user/user.service';
 import { ChannelEntity } from './channel.entity';
 import { UpdateChannelDTO } from './dto/update_channel.dto';
 import { UserEntity } from '../user/user.entity';
+import { Not, IsNull } from 'typeorm';
 
 // responseCode 정리
 // 40400 채널이 존재하지 않음.
@@ -29,6 +30,17 @@ export class ChannelService {
     public readonly subscribeRepository: SubscribeRepository,
     public readonly userService: UserService,
   ) {}
+
+  async getSubscribeChannle(page=1, size=100){
+    const user = await this.userService.getLoginUser(this.request.user['id']);
+    const data = await this.subscribeRepository.find({
+      where: { user: user.id},
+      skip: (page - 1) * size,
+      take: size,
+      relations: ['channel']
+    })
+    return data;
+  }
 
   async getChannelList(page = 1, size = 100): Promise<ChannelEntity[]> {
     const data = await this.channelRepositroy.find({

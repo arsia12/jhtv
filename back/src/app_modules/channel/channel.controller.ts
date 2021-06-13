@@ -39,6 +39,18 @@ export class ChannelController extends AbstractController {
     return this.makeResponse({ data });
   }
 
+  @UseGuards(AuthGuard)
+  @SwaggerDecorators('구독 채널 리스트')
+  @SwaggerPagination(1, 100)
+  @Get('subscribe')
+  async getSubscribeChannle(@Query() query) {
+    const data = await this.channelService.getSubscribeChannle(
+      query.page,
+      query.size,
+    );
+    return this.makeResponse({ data });
+  }
+
   @UseGuards(AuthGuardWithAnonymous)
   @SwaggerDecorators('채널 정보')
   @SwaggerParameter('Channel PK')
@@ -89,6 +101,6 @@ export class ChannelController extends AbstractController {
   @Delete('subscribe/:id')
   async deleteSubscribe(@Param('id') id: number) {
     const data = await this.channelService.deleteSubscribe(id);
-    return this.makeResponse({ data })
+    return this.makeResponse({ data });
   }
 }
