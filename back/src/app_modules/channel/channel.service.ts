@@ -1,5 +1,5 @@
 import { Injectable, Scope, Inject, HttpStatus } from '@nestjs/common';
-import { ChannelRepositroy, SubscribeRepository } from './channel.repository';
+import { ChannelRepositroy, PremiumRepository, SubscribeRepository } from './channel.repository';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { CreateChannelDTO } from './dto/careate_channel.dto';
@@ -8,7 +8,6 @@ import { UserService } from '../user/user.service';
 import { ChannelEntity } from './channel.entity';
 import { UpdateChannelDTO } from './dto/update_channel.dto';
 import { UserEntity } from '../user/user.entity';
-import { Not, IsNull } from 'typeorm';
 
 // responseCode 정리
 // 40400 채널이 존재하지 않음.
@@ -28,6 +27,7 @@ export class ChannelService {
     @Inject(REQUEST) private readonly request: Request,
     public readonly channelRepositroy: ChannelRepositroy,
     public readonly subscribeRepository: SubscribeRepository,
+    public readonly premiumRepository : PremiumRepository,
     public readonly userService: UserService,
   ) {}
 
@@ -43,6 +43,7 @@ export class ChannelService {
   }
 
   async getChannelList(page = 1, size = 100): Promise<ChannelEntity[]> {
+    const user = await this.userService.getLoginUser(this.request.user['id']);
     const data = await this.channelRepositroy.find({
       skip: (page - 1) * size,
       take: size,
@@ -186,6 +187,63 @@ export class ChannelService {
     await this.subscribeRepository.delete(subscribe_channel.id);
 
     return '구독을 취소하였습니다.';
+  }
+
+  async createPremium(id: number): Promise<string> {
+    const user = await this.userService.getLoginUser(this.request.user['id']);
+    const channel = await this.channelRepositroy.findOne({
+      where: { id: id },
+    });
+
+    // 예외처리
+    await this.channelException(channel, ownerCheck.N);
+
+    const premium_channel = await this.premiumRepository.findOne({
+      where: { channel: channel.id, user: user.id },
+    });
+
+    if (premium_channel) {
+      throw new GlobalException({
+        statusCode: HttpStatus.CONFLICT,
+        responseCode: Number(`${HttpStatus.CONFLICT}04`),
+        msg: '이미 유료 가입한 채널입니다.',
+      });
+    }
+
+    const subscribe = await this.subscribeRepository.create();
+
+    subscribe.channel = channel;
+    subscribe.user = user;
+
+    await this.subscribeRepository.save(subscribe);
+
+    return '유료 가입을 완료하였습니다.';
+  }
+
+  async deletePremium(id: number): Promise<string> {
+    const user = await this.userService.getLoginUser(this.request.user['id']);
+    const channel = await this.channelRepositroy.findOne({
+      where: { id: id },
+    });
+
+    // 예외처리
+    await this.channelException(channel, ownerCheck.N);
+
+    const premium_channel = await this.premiumRepository.findOne({
+      where: { channel: channel.id, user: user.id },
+    });
+
+    if (!premium_channel) {
+      throw new GlobalException({
+        statusCode: HttpStatus.CONFLICT,
+        responseCode: Number(`${HttpStatus.CONFLICT}4`),
+        msg: '유료 가입한 채널이 아닙니다.',
+      });
+    }
+
+    await this.subscribeRepository.delete(premium_channel.id);
+
+    return '유료 가입을 해지하였습니다.';
   }
 
   async channelException(channel: ChannelEntity, owner: number, user?: UserEntity): Promise<void> {

@@ -85,3 +85,29 @@ export class SubscribeEntity {
     @CreateDateColumn()
     regdate: Date;
 }
+
+@Entity({ name: 'Premium_User'})
+export class PremiumEntity {
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @ManyToOne(() => ChannelEntity, { onDelete: 'CASCADE' })
+    @JoinColumn({
+      name: 'channel_id',
+      referencedColumnName: 'id',
+    })
+    channel: ChannelEntity;
+
+    @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
+    @JoinColumn({
+      name: 'user_id',
+      referencedColumnName: 'id',
+    })
+    user: UserEntity;
+
+    @Column({ name : 'level', default : '1'})
+    level : number;
+
+    @CreateDateColumn()
+    regdate: Date;
+}
