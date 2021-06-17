@@ -3,11 +3,11 @@ import { RouterTag } from 'src/common/decorators/router_swagger_tag.decorator';
 import { AuthService } from './auth.service';
 import { UserLoginDto } from './dto/user_login.dto';
 import { AbstractController } from 'src/common/abstract_controller';
-import { SwaggerUserDecorators } from 'src/common/decorators/swagger.decorator';
+import { SwaggerDecorators, SwaggerUserDecorators } from 'src/common/decorators/swagger.decorator';
 
 @RouterTag('auth')
 export class AuthController extends AbstractController {
-  constructor(private readonly authSevice: AuthService) {
+  constructor(private readonly authService: AuthService) {
     super();
   }
 
@@ -15,7 +15,8 @@ export class AuthController extends AbstractController {
   @SwaggerUserDecorators('로그인')
   @Post('login')
   async login(@Body() body: UserLoginDto) {
-    const data = await this.authSevice.validateUser(body);
+    const data = await this.authService.validateUser(body);
     return this.makeResponse({ data })
   }
+  
 }

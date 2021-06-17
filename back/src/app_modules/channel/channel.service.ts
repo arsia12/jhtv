@@ -42,12 +42,22 @@ export class ChannelService {
     return data;
   }
 
-  async getChannelList(page = 1, size = 100): Promise<ChannelEntity[]> {
+  async getChannelList(page = 1, size = 100) {
     const user = await this.userService.getLoginUser(this.request.user['id']);
-    const data = await this.channelRepositroy.find({
+    let data = await this.channelRepositroy.find({
       skip: (page - 1) * size,
       take: size,
     });
+    for(let i = 0; i < data.length; i ++) {
+      const isSub = await this.subscribeRepository.findOne({
+        where : { channel : data[i].id, user : user.id}
+      })
+      if (isSub) {
+        data[i]['isSub'] = true;
+      }else { 
+        data[i]['isSub'] = false;
+      }
+    }
     return data;
   }
 
@@ -117,20 +127,32 @@ export class ChannelService {
     return '채널이 삭제되었습니다.';
   }
 
+  //구독 여부 체크
+  async isSubscribed(channel_id : number, user_id : number){
+    const subscribe_channel = await this.subscribeRepository.findOne({
+      where: { channel: channel_id, user: user_id },
+    });
+    return subscribe_channel;
+  }
+
   async createSubscribe(id: number): Promise<string> {
     // Todo : 로그인 유저 필요 / 로그인 유저 가져오는 함수가 있으면 좋을거 같음.
     // request 유저가 UserEntity인지 확인 필요.
     const user = await this.userService.getLoginUser(this.request.user['id']);
     const channel = await this.channelRepositroy.findOne({
       where: { id: id },
+      relations : ['user'],
     });
+    
 
     // 예외처리
     await this.channelException(channel, ownerCheck.N);
 
-    const subscribe_channel = await this.subscribeRepository.findOne({
-      where: { channel: channel.id, user: user.id },
-    });
+    // const subscribe_channel = await this.subscribeRepository.findOne({
+    //   where: { channel: channel.id, user: user.id },
+    // });
+
+    const subscribe_channel = await this.isSubscribed(channel.id, user.id);
 
     if (subscribe_channel) {
       throw new GlobalException({
@@ -138,6 +160,14 @@ export class ChannelService {
         responseCode: Number(`${HttpStatus.CONFLICT}02`),
         msg: '이미 구독한 채널입니다.',
       });
+    }
+
+    if(user.id == channel.user.id){
+      throw new GlobalException({
+        statusCode : HttpStatus.BAD_REQUEST,
+        responseCode : Number(`${HttpStatus.BAD_REQUEST}00`),
+        msg : '자신의 채널은 구독할 수 없습니다.'
+      })
     }
 
     const subscribe = await this.subscribeRepository.create();
@@ -210,6 +240,8 @@ export class ChannelService {
       });
     }
 
+    console.log(premium_channel);
+
     const subscribe = await this.subscribeRepository.create();
 
     subscribe.channel = channel;
@@ -244,6 +276,12 @@ export class ChannelService {
     await this.subscribeRepository.delete(premium_channel.id);
 
     return '유료 가입을 해지하였습니다.';
+  }
+
+  //프리미엄 구독 여부 체크
+  //1달이 지나면 해지되도록
+  async isPremium(id : number, channel_id : number) {
+    
   }
 
   async channelException(channel: ChannelEntity, owner: number, user?: UserEntity): Promise<void> {

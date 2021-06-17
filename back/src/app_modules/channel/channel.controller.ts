@@ -27,7 +27,7 @@ export class ChannelController extends AbstractController {
   }
 
   @UseGuards(AuthGuardWithAnonymous)
-  @SwaggerDecorators('채널 전체 리스트')
+  @SwaggerDecorators('채널 전체 리스트', 'isSub : 채널 구독 여부 표시')
   @SwaggerPagination(1, 100)
   @Get()
   async getChannelList(@Query() query) {
@@ -101,6 +101,24 @@ export class ChannelController extends AbstractController {
   @Delete('subscribe/:id')
   async deleteSubscribe(@Param('id') id: number) {
     const data = await this.channelService.deleteSubscribe(id);
+    return this.makeResponse({ data });
+  }
+
+  @UseGuards(AuthGuard)
+  @SwaggerDecorators('채널 유료 구독')
+  @SwaggerParameter('Channel PK')
+  @Post('premium/:id')
+  async createPremium(@Param('id') id: number) {
+    const data = await this.channelService.createPremium(id);
+    return this.makeResponse({ data });
+  }
+
+  @UseGuards(AuthGuard)
+  @SwaggerDecorators('채널 유료 구독 취소')
+  @SwaggerParameter('Channel PK')
+  @Delete('premium/:id')
+  async deletePremium(@Param('id') id: number) {
+    const data = await this.channelService.deletePremium(id);
     return this.makeResponse({ data });
   }
 }

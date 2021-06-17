@@ -16,7 +16,7 @@ export class ChannelEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'name' })
+  @Column({ name: 'name', unique : true })
   name: string;
 
   @Column({ name: 'content', type: 'text' })
