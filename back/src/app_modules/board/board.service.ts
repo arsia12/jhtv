@@ -9,6 +9,7 @@ import { BoardEntity } from './board.entity';
 import { UserService } from '../user/user.service';
 import { UpdateBoardDTO } from './dto/update_board.dto';
 import { UserEntity } from '../user/user.entity';
+import { isNotEmpty } from 'class-validator';
 // Response Code List
 // 40400 채널이 존재하지 않음.
 // 40410 게시판이 존재하지 않음.
@@ -46,9 +47,34 @@ export class BoardService {
       take: size,
       order: { id: 'DESC' },
     });
-
     return board;
   }
+
+  //전체 게시글 조회
+  //왜 못받아옴????????
+  async getBoardList(page = 1, size = 100){
+    console.log(this.request.user['id']);
+    const user_id = this.request.user['id'] ? this.request.user['id'] : 0;
+    let data = await this.boardRepository.find({
+      skip: (page - 1) * size,
+      take: size,
+    });
+    if(user_id != 0){
+     const user = await this.userService.getLoginUser(user_id);
+     for(let i = 0; i < data.length; i++) {
+       const isLike = await this.likeBoardRepository.findOne({
+         where : { board : data[i].id, user : user.id }
+       }) 
+       if (isLike) {
+         data[i]['isLike'] = true;
+       } else {
+         data[i]['isLike'] = false;
+       }
+     }
+    }
+    return data;
+  }
+
   async createBoard(body: CreateBoardDTO): Promise<string> {
     // Todo : 로그인 아이디 필요 (현재 test용 아이디)
     const user = await this.userService.getLoginUser(this.request.user['id']);
@@ -76,7 +102,7 @@ export class BoardService {
       relations: ['user'],
     });
 
-    await this.barodException(board, ownerCheck.Y, user);
+    await this.boardException(board, ownerCheck.Y, user);
 
     await this.boardRepository.update(id, body);
 
@@ -92,7 +118,7 @@ export class BoardService {
     });
 
     // 예외처리 함수
-    await this.barodException(board, ownerCheck.Y, user);
+    await this.boardException(board, ownerCheck.Y, user);
 
     await this.boardRepository.delete(id);
 
@@ -103,7 +129,7 @@ export class BoardService {
     const user = await this.userService.getLoginUser(this.request.user['id']);
     const board = await this.boardRepository.findOne(id);
 
-    await this.barodException(board, ownerCheck.N);
+    await this.boardException(board, ownerCheck.N);
 
     const like_board = await this.likeBoardRepository.findOne({
       where: { board: board.id, user: user.id },
@@ -113,7 +139,7 @@ export class BoardService {
       throw new GlobalException({
         statusCode: HttpStatus.CONFLICT,
         responseCode: Number(`${HttpStatus.CONFLICT}12`),
-        msg: '이미 좋아요한 개시글입니다.',
+        msg: '이미 좋아요한 게시글입니다.',
       });
     }
 
@@ -124,14 +150,14 @@ export class BoardService {
 
     await this.likeBoardRepository.save(like);
 
-    return '게시글을 좋아합니다.';
+    return '게시글을 좋아요 했습니다.';
   }
 
   async deleteLikeBoard(id: number): Promise<string> {
     const user = await this.userService.getLoginUser(this.request.user['id']);
     const board = await this.boardRepository.findOne(id);
 
-    await this.barodException(board, ownerCheck.N);
+    await this.boardException(board, ownerCheck.N);
 
     const like_board = await this.likeBoardRepository.findOne({
       where: { board: board.id, user: user.id },
@@ -155,12 +181,12 @@ export class BoardService {
     const board = await this.boardRepository.findOne(id);
 
     // 예외처리 함수
-    await this.barodException(board, ownerCheck.N);
+    await this.boardException(board, ownerCheck.N);
 
     return board;
   }
 
-  async barodException(board: BoardEntity, owner: number, user?: UserEntity): Promise<void> {
+  async boardException(board: BoardEntity, owner: number, user?: UserEntity): Promise<void> {
     
     // 게시글 존재 예외처리
     if (!board) {

@@ -6,7 +6,11 @@ import { ChannelRepositroy, PremiumRepository, SubscribeRepository } from './cha
 import { UserModule } from '../user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ChannelRepositroy, SubscribeRepository, PremiumRepository]), UserModule],
+  imports: [TypeOrmModule.forFeature([
+    ChannelRepositroy, 
+    SubscribeRepository, 
+    PremiumRepository]), 
+    UserModule],
   controllers: [ChannelController],
   providers: [ChannelService],
   exports: [ChannelService],

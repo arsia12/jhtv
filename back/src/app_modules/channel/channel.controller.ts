@@ -35,7 +35,6 @@ export class ChannelController extends AbstractController {
       query.page,
       query.size,
     );
-    console.log(data);
     return this.makeResponse({ data });
   }
 

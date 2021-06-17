@@ -43,19 +43,22 @@ export class ChannelService {
   }
 
   async getChannelList(page = 1, size = 100) {
-    const user = await this.userService.getLoginUser(this.request.user['id']);
+    const user_id = this.request.user['id'] ? this.request.user['id'] : 0;
     let data = await this.channelRepositroy.find({
       skip: (page - 1) * size,
       take: size,
     });
-    for(let i = 0; i < data.length; i ++) {
-      const isSub = await this.subscribeRepository.findOne({
-        where : { channel : data[i].id, user : user.id}
-      })
-      if (isSub) {
-        data[i]['isSub'] = true;
-      }else { 
-        data[i]['isSub'] = false;
+    if(user_id != 0) {
+      const user = await this.userService.getLoginUser(this.request.user['id']);
+      for(let i = 0; i < data.length; i ++) {
+        const isSub = await this.subscribeRepository.findOne({
+          where : { channel : data[i].id, user : user.id}
+        })
+        if (isSub) {
+          data[i]['isSub'] = true;
+        }else { 
+          data[i]['isSub'] = false;
+        }
       }
     }
     return data;
