@@ -32,7 +32,6 @@ export class BoardService {
   ) {}
 
   //전체 게시글 조회
-  //왜 못받아옴????????
   async getBoardList(page = 1, size = 100) {
     const user_id = this.request.user['id'] ? this.request.user['id'] : 0;
     let data = await this.boardRepository.find({
@@ -40,7 +39,7 @@ export class BoardService {
       take: size,
     });
     if(user_id != 0) {
-      const user = await this.userService.getLoginUser(this.request.user['id']);
+      const user = await this.userService.getLoginUser(user_id);
       for(let i = 0; i < data.length; i ++) {
         const isSub = await this.likeBoardRepository.findOne({
           where : { board : data[i].id, user : user.id}
@@ -60,8 +59,8 @@ export class BoardService {
     page = 1,
     size = 100,
   ): Promise<BoardEntity[]> {
+    const user_id = this.request.user['id'] ? this.request.user['id'] : 0;
     const channel = await this.channelService.getChannel(id);
-
     // 채널에 대한 예외처리
     await this.channelService.channelException(channel, ownerCheck.N);
 
@@ -71,6 +70,19 @@ export class BoardService {
       take: size,
       order: { id: 'DESC' },
     });
+    if(user_id != 0) {
+      const user = await this.userService.getLoginUser(user_id);
+      for(let i = 0; i < board.length; i ++) {
+        const isSub = await this.likeBoardRepository.findOne({
+          where : { board : board[i].id, user : user.id}
+        })
+        if (isSub) {
+          board[i]['isLike'] = true;
+        }else { 
+          board[i]['isLike'] = false;
+        }
+      }
+    }
     return board;
   }
 
