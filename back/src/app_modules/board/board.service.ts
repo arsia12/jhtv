@@ -31,6 +31,30 @@ export class BoardService {
     public readonly userService: UserService,
   ) {}
 
+  //전체 게시글 조회
+  //왜 못받아옴????????
+  async getBoardList(page = 1, size = 100) {
+    const user_id = this.request.user['id'] ? this.request.user['id'] : 0;
+    let data = await this.boardRepository.find({
+      skip: (page - 1) * size,
+      take: size,
+    });
+    if(user_id != 0) {
+      const user = await this.userService.getLoginUser(this.request.user['id']);
+      for(let i = 0; i < data.length; i ++) {
+        const isSub = await this.likeBoardRepository.findOne({
+          where : { board : data[i].id, user : user.id}
+        })
+        if (isSub) {
+          data[i]['isLike'] = true;
+        }else { 
+          data[i]['isLike'] = false;
+        }
+      }
+    }
+    return data;
+  }
+
   async getBoardByChannel(
     id: number,
     page = 1,
@@ -48,31 +72,6 @@ export class BoardService {
       order: { id: 'DESC' },
     });
     return board;
-  }
-
-  //전체 게시글 조회
-  //왜 못받아옴????????
-  async getBoardList(page = 1, size = 100){
-    console.log(this.request.user['id']);
-    const user_id = this.request.user['id'] ? this.request.user['id'] : 0;
-    let data = await this.boardRepository.find({
-      skip: (page - 1) * size,
-      take: size,
-    });
-    if(user_id != 0){
-     const user = await this.userService.getLoginUser(user_id);
-     for(let i = 0; i < data.length; i++) {
-       const isLike = await this.likeBoardRepository.findOne({
-         where : { board : data[i].id, user : user.id }
-       }) 
-       if (isLike) {
-         data[i]['isLike'] = true;
-       } else {
-         data[i]['isLike'] = false;
-       }
-     }
-    }
-    return data;
   }
 
   async createBoard(body: CreateBoardDTO): Promise<string> {

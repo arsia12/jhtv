@@ -17,7 +17,7 @@ export class BoardController extends AbstractController {
   }
 
   @UseGuards(AuthGuardWithAnonymous)
-  @SwaggerUserDecorators('전체 게시글', 'isLike : 게시글 좋아요 여부')
+  @SwaggerDecorators('전체 게시글', 'isLike : 게시글 좋아요 여부')
   @SwaggerPagination(1, 100)
   @Get()
   async getBoardList(@Query() query) {
@@ -29,7 +29,7 @@ export class BoardController extends AbstractController {
   }
 
   @UseGuards(AuthGuardWithAnonymous)
-  @SwaggerUserDecorators('채널 게시글')
+  @SwaggerDecorators('채널 게시글')
   @SwaggerParameter('Channel PK')
   @SwaggerPagination(1, 100)
   @Get(':id')

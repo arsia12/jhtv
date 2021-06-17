@@ -43,6 +43,7 @@ export class ChannelService {
   }
 
   async getChannelList(page = 1, size = 100) {
+    console.log(this.request.user['id']);
     const user_id = this.request.user['id'] ? this.request.user['id'] : 0;
     let data = await this.channelRepositroy.find({
       skip: (page - 1) * size,
