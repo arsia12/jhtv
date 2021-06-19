@@ -9,6 +9,7 @@ import {
   OneToOne,
   CreateDateColumn,
   ManyToOne,
+  AfterLoad,
 } from 'typeorm';
 
 @Entity({ name: 'Channel' })
@@ -44,6 +45,8 @@ export class ChannelEntity {
     referencedColumnName: 'channel_id',
   })
   subscribe: SubscribeEntity[];
+
+
 
 //   ManyToMany 사용법 (하지만 실무에서 지양)
 //   @ManyToMany(() => UserEntity, (user) => user.id, { cascade: true })

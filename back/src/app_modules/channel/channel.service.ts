@@ -1,5 +1,9 @@
 import { Injectable, Scope, Inject, HttpStatus } from '@nestjs/common';
-import { ChannelRepositroy, PremiumRepository, SubscribeRepository } from './channel.repository';
+import {
+  ChannelRepositroy,
+  PremiumRepository,
+  SubscribeRepository,
+} from './channel.repository';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { CreateChannelDTO } from './dto/careate_channel.dto';
@@ -27,7 +31,7 @@ export class ChannelService {
     @Inject(REQUEST) private readonly request: Request,
     public readonly channelRepositroy: ChannelRepositroy,
     public readonly subscribeRepository: SubscribeRepository,
-    public readonly premiumRepository : PremiumRepository,
+    public readonly premiumRepository: PremiumRepository,
     public readonly userService: UserService,
   ) {}
 
@@ -43,25 +47,23 @@ export class ChannelService {
   }
 
   async getChannelList(page = 1, size = 100) {
-    console.log(this.request.user['id']);
-    const user_id = this.request.user['id'] ? this.request.user['id'] : 0;
-    let data = await this.channelRepositroy.find({
+    const user_id = this.request.user['id'] ? this.request.user['id'] : null;
+    const data = await this.channelRepositroy.find({
       skip: (page - 1) * size,
       take: size,
     });
-    if(user_id != 0) {
-      const user = await this.userService.getLoginUser(this.request.user['id']);
-      for(let i = 0; i < data.length; i ++) {
+    for (const sub of data) {
+      sub['isSub'] = false;
+      if (user_id) {
         const isSub = await this.subscribeRepository.findOne({
-          where : { channel : data[i].id, user : user.id}
-        })
+          where: { channel: sub.id, user: user_id },
+        });
         if (isSub) {
-          data[i]['isSub'] = true;
-        }else { 
-          data[i]['isSub'] = false;
-        }
+          sub['isSub'] = true;
+        } 
       }
     }
+
     return data;
   }
 
@@ -132,7 +134,7 @@ export class ChannelService {
   }
 
   //구독 여부 체크
-  async isSubscribed(channel_id : number, user_id : number){
+  async isSubscribed(channel_id: number, user_id: number) {
     const subscribe_channel = await this.subscribeRepository.findOne({
       where: { channel: channel_id, user: user_id },
     });
@@ -145,9 +147,8 @@ export class ChannelService {
     const user = await this.userService.getLoginUser(this.request.user['id']);
     const channel = await this.channelRepositroy.findOne({
       where: { id: id },
-      relations : ['user'],
+      relations: ['user'],
     });
-    
 
     // 예외처리
     await this.channelException(channel, ownerCheck.N);
@@ -166,12 +167,12 @@ export class ChannelService {
       });
     }
 
-    if(user.id == channel.user.id){
+    if (user.id == channel.user.id) {
       throw new GlobalException({
-        statusCode : HttpStatus.BAD_REQUEST,
-        responseCode : Number(`${HttpStatus.BAD_REQUEST}00`),
-        msg : '자신의 채널은 구독할 수 없습니다.'
-      })
+        statusCode: HttpStatus.BAD_REQUEST,
+        responseCode: Number(`${HttpStatus.BAD_REQUEST}00`),
+        msg: '자신의 채널은 구독할 수 없습니다.',
+      });
     }
 
     const subscribe = await this.subscribeRepository.create();
@@ -284,11 +285,13 @@ export class ChannelService {
 
   //프리미엄 구독 여부 체크
   //1달이 지나면 해지되도록
-  async isPremium(id : number, channel_id : number) {
-    
-  }
+  async isPremium(id: number, channel_id: number) {}
 
-  async channelException(channel: ChannelEntity, owner: number, user?: UserEntity): Promise<void> {
+  async channelException(
+    channel: ChannelEntity,
+    owner: number,
+    user?: UserEntity,
+  ): Promise<void> {
     // 채널이 존재하지 않을 경우 예외 처리
     if (!channel) {
       throw new GlobalException({
