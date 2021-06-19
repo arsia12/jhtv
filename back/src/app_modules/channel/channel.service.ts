@@ -1,5 +1,9 @@
 import { Injectable, Scope, Inject, HttpStatus } from '@nestjs/common';
-import { ChannelRepositroy, SubscribeRepository } from './channel.repository';
+import {
+  ChannelRepositroy,
+  PremiumRepository,
+  SubscribeRepository,
+} from './channel.repository';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { CreateChannelDTO } from './dto/careate_channel.dto';
@@ -27,14 +31,39 @@ export class ChannelService {
     @Inject(REQUEST) private readonly request: Request,
     public readonly channelRepositroy: ChannelRepositroy,
     public readonly subscribeRepository: SubscribeRepository,
+    public readonly premiumRepository: PremiumRepository,
     public readonly userService: UserService,
   ) {}
 
-  async getChannelList(page = 1, size = 100): Promise<ChannelEntity[]> {
+  async getSubscribeChannle(page = 1, size = 100) {
+    const user = await this.userService.getLoginUser(this.request.user['id']);
+    const data = await this.subscribeRepository.find({
+      where: { user: user.id },
+      skip: (page - 1) * size,
+      take: size,
+      relations: ['channel'],
+    });
+    return data;
+  }
+
+  async getChannelList(page = 1, size = 100) {
+    const user_id = this.request.user['id'] ? this.request.user['id'] : null;
     const data = await this.channelRepositroy.find({
       skip: (page - 1) * size,
       take: size,
     });
+    for (const sub of data) {
+      sub['isSub'] = false;
+      if (user_id) {
+        const isSub = await this.subscribeRepository.findOne({
+          where: { channel: sub.id, user: user_id },
+        });
+        if (isSub) {
+          sub['isSub'] = true;
+        } 
+      }
+    }
+
     return data;
   }
 
@@ -76,7 +105,7 @@ export class ChannelService {
 
   async updateChannel(id: number, body: UpdateChannelDTO): Promise<string> {
     const user = await this.userService.getLoginUser(this.request.user['id']);
-    
+
     const channel = await this.channelRepositroy.findOne({
       where: { id: id },
       relations: ['user'],
@@ -91,7 +120,7 @@ export class ChannelService {
 
   async deleteChannel(id: number): Promise<string> {
     const user = await this.userService.getLoginUser(this.request.user['id']);
-    
+
     const channel = await this.channelRepositroy.findOne({
       where: { id: id },
       relations: ['user'],
@@ -104,26 +133,45 @@ export class ChannelService {
     return '채널이 삭제되었습니다.';
   }
 
+  //구독 여부 체크
+  async isSubscribed(channel_id: number, user_id: number) {
+    const subscribe_channel = await this.subscribeRepository.findOne({
+      where: { channel: channel_id, user: user_id },
+    });
+    return subscribe_channel;
+  }
+
   async createSubscribe(id: number): Promise<string> {
     // Todo : 로그인 유저 필요 / 로그인 유저 가져오는 함수가 있으면 좋을거 같음.
     // request 유저가 UserEntity인지 확인 필요.
     const user = await this.userService.getLoginUser(this.request.user['id']);
     const channel = await this.channelRepositroy.findOne({
       where: { id: id },
+      relations: ['user'],
     });
 
     // 예외처리
     await this.channelException(channel, ownerCheck.N);
 
-    const subscribe_channel = await this.subscribeRepository.findOne({
-      where: { channel: channel.id, user: user.id },
-    });
+    // const subscribe_channel = await this.subscribeRepository.findOne({
+    //   where: { channel: channel.id, user: user.id },
+    // });
+
+    const subscribe_channel = await this.isSubscribed(channel.id, user.id);
 
     if (subscribe_channel) {
       throw new GlobalException({
         statusCode: HttpStatus.CONFLICT,
         responseCode: Number(`${HttpStatus.CONFLICT}02`),
         msg: '이미 구독한 채널입니다.',
+      });
+    }
+
+    if (user.id == channel.user.id) {
+      throw new GlobalException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        responseCode: Number(`${HttpStatus.BAD_REQUEST}00`),
+        msg: '자신의 채널은 구독할 수 없습니다.',
       });
     }
 
@@ -176,7 +224,74 @@ export class ChannelService {
     return '구독을 취소하였습니다.';
   }
 
-  async channelException(channel: ChannelEntity, owner: number, user?: UserEntity): Promise<void> {
+  async createPremium(id: number): Promise<string> {
+    const user = await this.userService.getLoginUser(this.request.user['id']);
+    const channel = await this.channelRepositroy.findOne({
+      where: { id: id },
+    });
+
+    // 예외처리
+    await this.channelException(channel, ownerCheck.N);
+
+    const premium_channel = await this.premiumRepository.findOne({
+      where: { channel: channel.id, user: user.id },
+    });
+
+    if (premium_channel) {
+      throw new GlobalException({
+        statusCode: HttpStatus.CONFLICT,
+        responseCode: Number(`${HttpStatus.CONFLICT}04`),
+        msg: '이미 유료 가입한 채널입니다.',
+      });
+    }
+
+    console.log(premium_channel);
+
+    const subscribe = await this.subscribeRepository.create();
+
+    subscribe.channel = channel;
+    subscribe.user = user;
+
+    await this.subscribeRepository.save(subscribe);
+
+    return '유료 가입을 완료하였습니다.';
+  }
+
+  async deletePremium(id: number): Promise<string> {
+    const user = await this.userService.getLoginUser(this.request.user['id']);
+    const channel = await this.channelRepositroy.findOne({
+      where: { id: id },
+    });
+
+    // 예외처리
+    await this.channelException(channel, ownerCheck.N);
+
+    const premium_channel = await this.premiumRepository.findOne({
+      where: { channel: channel.id, user: user.id },
+    });
+
+    if (!premium_channel) {
+      throw new GlobalException({
+        statusCode: HttpStatus.CONFLICT,
+        responseCode: Number(`${HttpStatus.CONFLICT}4`),
+        msg: '유료 가입한 채널이 아닙니다.',
+      });
+    }
+
+    await this.subscribeRepository.delete(premium_channel.id);
+
+    return '유료 가입을 해지하였습니다.';
+  }
+
+  //프리미엄 구독 여부 체크
+  //1달이 지나면 해지되도록
+  async isPremium(id: number, channel_id: number) {}
+
+  async channelException(
+    channel: ChannelEntity,
+    owner: number,
+    user?: UserEntity,
+  ): Promise<void> {
     // 채널이 존재하지 않을 경우 예외 처리
     if (!channel) {
       throw new GlobalException({

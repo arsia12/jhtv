@@ -22,19 +22,19 @@ export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'username' })
+  @Column({ name: 'username', unique : true})
   username: string;
 
   @Column({ name: 'password', select: false })
   password: string;
 
-  @Column({ name: 'phone' })
+  @Column({ name: 'phone', unique : true })
   phone: string;
 
-  @Column({ name: 'email' })
+  @Column({ name: 'email', unique : true })
   email: string;
 
-  @Column({ name: 'nickname' })
+  @Column({ name: 'nickname', unique : true })
   nickname: string;
 
   @CreateDateColumn()
