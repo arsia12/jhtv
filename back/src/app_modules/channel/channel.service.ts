@@ -31,23 +31,35 @@ export class ChannelService {
     public readonly userService: UserService,
   ) {}
 
-  async getSubscribeChannle(page=1, size=100){
+  async getSubscribeChannle(page = 1, size = 100) {
     const user = await this.userService.getLoginUser(this.request.user['id']);
     const data = await this.subscribeRepository.find({
-      where: { user: user.id},
+      where: { user: user.id },
       skip: (page - 1) * size,
       take: size,
-      relations: ['channel']
-    })
+      relations: ['channel'],
+    });
     return data;
   }
 
   async getChannelList(page = 1, size = 100): Promise<ChannelEntity[]> {
-    const data = await this.channelRepositroy.find({
-      skip: (page - 1) * size,
-      take: size,
-    });
-    return data;
+    const login_user = this.request.user ? this.request.user['id'] : undefined;
+    if (login_user) {
+      const user = await this.userService.getLoginUser(this.request.user['id']);
+      const data = await this.channelRepositroy.find({
+        skip: (page - 1) * size,
+        take: size,
+        relations: ['subscribe'],
+      });
+    
+      return data;
+    } else {
+      const data = await this.channelRepositroy.find({
+        skip: (page - 1) * size,
+        take: size,
+      });
+      return data;
+    }
   }
 
   async getChannel(id: number): Promise<ChannelEntity> {
@@ -88,7 +100,7 @@ export class ChannelService {
 
   async updateChannel(id: number, body: UpdateChannelDTO): Promise<string> {
     const user = await this.userService.getLoginUser(this.request.user['id']);
-    
+
     const channel = await this.channelRepositroy.findOne({
       where: { id: id },
       relations: ['user'],
@@ -103,7 +115,7 @@ export class ChannelService {
 
   async deleteChannel(id: number): Promise<string> {
     const user = await this.userService.getLoginUser(this.request.user['id']);
-    
+
     const channel = await this.channelRepositroy.findOne({
       where: { id: id },
       relations: ['user'],
@@ -188,7 +200,11 @@ export class ChannelService {
     return '구독을 취소하였습니다.';
   }
 
-  async channelException(channel: ChannelEntity, owner: number, user?: UserEntity): Promise<void> {
+  async channelException(
+    channel: ChannelEntity,
+    owner: number,
+    user?: UserEntity,
+  ): Promise<void> {
     // 채널이 존재하지 않을 경우 예외 처리
     if (!channel) {
       throw new GlobalException({
