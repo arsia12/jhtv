@@ -12,19 +12,23 @@ import {
 } from 'react-native';
 
 function SignupScreen({ navigation }) {
+  const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [nickName, setNickName] = useState("");
 
   return (
     <Container>
-      <StyledTitleText >회원가입</StyledTitleText>
-      <Input onChangeText={setEmail} placeholder="이메일" value={email} />
+      <StyledTitleText >Register</StyledTitleText>
       <Input onChangeText={setId} placeholder="아이디" value={id} />
+      {/* <Input onChangeText={setUserName} placeholder="성명" value={userName} ></Input> */}
+      <Input onChangeText={setEmail} placeholder="이메일" value={email} />
       <Input onChangeText={setPassword} placeholder="비밀번호" value={password} />
-      <Input onChangeText={setPassword} placeholder="비밀번호 확인" value={password} />
+      <Input onChangeText={setPhone} placeholder="핸드폰" value={phone} />
       <Input onChangeText={setNickName} placeholder="닉네임" value={nickName} />
+      {/* <Input onChangeText={setPassword} placeholder="비밀번호 확인" value={password} /> */}
 
       <SubmitButton>
         <StyledText>저장</StyledText>
@@ -70,7 +74,7 @@ const StyledText = styled.Text`
 const StyledTitleText = styled.Text`
   color: #000;
   margin-bottom: 30px;
-  font-size: 18px;
+  font-size: 25px;
 `;
 
 
