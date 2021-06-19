@@ -16,7 +16,7 @@ export class ChannelEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'name' })
+  @Column({ name: 'name', unique : true })
   name: string;
 
   @Column({ name: 'content', type: 'text' })
@@ -81,6 +81,32 @@ export class SubscribeEntity {
       referencedColumnName: 'id',
     })
     user: UserEntity;
+
+    @CreateDateColumn()
+    regdate: Date;
+}
+
+@Entity({ name: 'Premium_User'})
+export class PremiumEntity {
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @ManyToOne(() => ChannelEntity, { onDelete: 'CASCADE' })
+    @JoinColumn({
+      name: 'channel_id',
+      referencedColumnName: 'id',
+    })
+    channel: ChannelEntity;
+
+    @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
+    @JoinColumn({
+      name: 'user_id',
+      referencedColumnName: 'id',
+    })
+    user: UserEntity;
+
+    @Column({ name : 'level', default : '1'})
+    level : number;
 
     @CreateDateColumn()
     regdate: Date;

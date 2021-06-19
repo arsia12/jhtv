@@ -1,7 +1,7 @@
 import { Post, Body, Get, Param, Query, Delete, Put, UseGuards } from '@nestjs/common';
 import { AbstractController } from 'src/common/abstract_controller';
 import { RouterTag } from 'src/common/decorators/router_swagger_tag.decorator';
-import { SwaggerDecorators } from 'src/common/decorators/swagger.decorator';
+import { SwaggerDecorators, SwaggerUserDecorators } from 'src/common/decorators/swagger.decorator';
 import { BoardService } from './board.service';
 import { CreateBoardDTO } from './dto/create_board.dto';
 import { SwaggerParameter } from 'src/common/decorators/parameter.decotrator';
@@ -14,6 +14,18 @@ import { AuthGuardWithAnonymous } from 'src/common/guards/auth_anonymous.guard';
 export class BoardController extends AbstractController {
   constructor(private readonly boardService: BoardService) {
     super();
+  }
+
+  @UseGuards(AuthGuardWithAnonymous)
+  @SwaggerDecorators('전체 게시글', 'isLike : 게시글 좋아요 여부')
+  @SwaggerPagination(1, 100)
+  @Get()
+  async getBoardList(@Query() query) {
+    const data = await this.boardService.getBoardList(
+      query.page,
+      query.size,
+    )
+    return this.makeResponse({data});
   }
 
   @UseGuards(AuthGuardWithAnonymous)

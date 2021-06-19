@@ -21,7 +21,7 @@ export function SwaggerDecorators(swagger_summary, swagger_description?) {
   }
 }
 
-export function SwaggerLoginDecorators(swagger_summary, swagger_description?) {
+export function SwaggerUserDecorators(swagger_summary, swagger_description?) {
   if (!swagger_description) {
     return applyDecorators(
       ApiOperation({
