@@ -9,7 +9,6 @@ import { BoardEntity } from './board.entity';
 import { UserService } from '../user/user.service';
 import { UpdateBoardDTO } from './dto/update_board.dto';
 import { UserEntity } from '../user/user.entity';
-import { isNotEmpty } from 'class-validator';
 // Response Code List
 // 40400 채널이 존재하지 않음.
 // 40410 게시판이 존재하지 않음.
@@ -34,20 +33,18 @@ export class BoardService {
   //전체 게시글 조회
   async getBoardList(page = 1, size = 100) {
     const user_id = this.request.user['id'] ? this.request.user['id'] : 0;
-    let data = await this.boardRepository.find({
+    const data = await this.boardRepository.find({
       skip: (page - 1) * size,
       take: size,
     });
-    if(user_id != 0) {
-      const user = await this.userService.getLoginUser(user_id);
-      for(let i = 0; i < data.length; i ++) {
+    for(const sub of data) {
+      sub['isLike'] = false;
+      if(user_id) {
         const isSub = await this.likeBoardRepository.findOne({
-          where : { board : data[i].id, user : user.id}
-        })
-        if (isSub) {
-          data[i]['isLike'] = true;
-        }else { 
-          data[i]['isLike'] = false;
+          where : { board : sub.id, user : user_id}
+        });
+        if(isSub) {
+          sub['isLike'] = true;
         }
       }
     }
@@ -70,16 +67,14 @@ export class BoardService {
       take: size,
       order: { id: 'DESC' },
     });
-    if(user_id != 0) {
-      const user = await this.userService.getLoginUser(user_id);
-      for(let i = 0; i < board.length; i ++) {
+    for(const sub of board) {
+      sub['isLike'] = false;
+      if(user_id) {
         const isSub = await this.likeBoardRepository.findOne({
-          where : { board : board[i].id, user : user.id}
-        })
-        if (isSub) {
-          board[i]['isLike'] = true;
-        }else { 
-          board[i]['isLike'] = false;
+          where : { board : sub.id, user : user_id}
+        });
+        if(isSub) {
+          sub['isLike'] = true;
         }
       }
     }
