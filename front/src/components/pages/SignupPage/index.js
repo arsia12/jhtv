@@ -20,6 +20,7 @@ function SignupScreen({ navigation }) {
   const [nickName, setNickName] = useState("");
 
   return (
+    <View style={{ flex: 1,  backgroundColor: '#fff'}}>
     <Container>
       <StyledTitleText >Register</StyledTitleText>
       <Input onChangeText={setId} placeholder="아이디" value={id} />
@@ -35,8 +36,8 @@ function SignupScreen({ navigation }) {
       </SubmitButton>    
       {/* <Button title="Go to Home" onPress={() => navigation.push('Main')} />
       <Button title="Go back" onPress={() => navigation.goBack()} /> */}
-
     </Container >
+    </View>
   );
 }
 const Container = styled(SafeAreaView)`

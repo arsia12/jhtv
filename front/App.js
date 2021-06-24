@@ -9,7 +9,7 @@ import LandingScreen from '../front/src/components/pages/LandingPage/index';
 import LoginScreen from '../front/src/components/pages/LoginPage/index';
 import SignupScreen from './src/components/pages/SignupPage/index';
 import LogoutScreen from './src/components/pages/LogoutPage/index'
-
+import ChannelScreen from './src/components/pages/ChannelPage/index'
 
 
 
@@ -51,66 +51,70 @@ const Stack = createStackNavigator();
 
 
 
-// function App() {
-//   return (
-//     <NavigationContainer>
-//       <Tab.Navigator
-//         headerMode="none"
-//         screenOptions={{
-//           headerStyle: {
-//             backgroundColor: '#272C35',
-//           },
-//           headerTintColor: '#fff',
-//           headerTitleStyle: {
-//             fontWeight: 'bold',
-//           },
-//         }}>
-//         <Tab.Screen name="Logout" component={} />
-//         {/* <Stack.Screen name="Main" component={LandingScreen} /> */}
-//         <Tab.Screen name="Login" component={SettingsStack} />
-//         {/* <Tab.Screen name="SignUp" component={SignupScreen} /> */}
-//       </Tab.Navigator>
-//     </NavigationContainer>
+function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator
+        headerMode="none"
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: '#272C35',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}>
+        <Stack.Screen name="Channel" component={ChannelScreen} />
+        {/* <Stack.Screen name="Logout" component={LogoutScreen} /> */}
+        {/* <Stack.Screen name="Main" component={LandingScreen} /> */}
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="SignUp" component={SignupScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
 
+  );
+}
+
+export default App;
+
+
+
+// function HomeScreen() {
+//   return (
+//     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+//       <Text>Home!</Text>
+//     </View>
 //   );
 // }
 
-// export default App;
+// function SettingsScreen() {
+//   return (
+//     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+//       <Text>Settings!</Text>
+//     </View>
+//   );
+// }
+
+// const Tab = createBottomTabNavigator();
+
+// const token = true;
+// export default function App() {
+//   return (
+//     <NavigationContainer>
+//       {/* {token ? */}
+//         {/* <Stack.Screen name="Logout" component={LogoutScreen} /> */}
+//         {/* : */}
+//         <Tab.Navigator>
+//         <Tab.Screen name="Logout" component={LogoutScreen} />
+//         <Tab.Screen name="Home" component={LandingScreen} />
+//           <Tab.Screen name="Settings" component={SettingsScreen} />
+//         </Tab.Navigator>
+//       {/* } */}
+//     </NavigationContainer>
+//   );
+// }
 
 
-
-function HomeScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Home!</Text>
-    </View>
-  );
-}
-
-function SettingsScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Settings!</Text>
-    </View>
-  );
-}
-
-const Tab = createBottomTabNavigator();
-
-const token = true;
-export default function App() {
-  return (
-    <NavigationContainer>
-      {/* {token ? */}
-        <Stack.Screen name="Logout" component={LogoutScreen} />
-        {/* : */}
-        <Tab.Navigator>
-          <Tab.Screen name="Home" component={LandingScreen} />
-          <Tab.Screen name="Settings" component={SettingsScreen} />
-        </Tab.Navigator>
-      {/* } */}
-    </NavigationContainer>
-  );
-}
 
 
