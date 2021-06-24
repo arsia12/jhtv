@@ -91,6 +91,7 @@ function LoginScreen({navigation}) {
   };
 
   return (
+    <View style={{ flex: 1, backgroundColor: '#fff' }}>
     <Container>
       <StyledTitleText >Login</StyledTitleText>
       <Input onChangeText={onChangeEmail} placeholder="이메일" value={email} />
@@ -114,6 +115,7 @@ function LoginScreen({navigation}) {
       </KaKaoButton>
       {/* <RegisterdText onPress={() => navigation.navigate('SignUp')}>처음이시라면, 회원가입이 필요해요 :)</RegisterdText> */}
     </Container>
+    </View>
   );
 }
 
