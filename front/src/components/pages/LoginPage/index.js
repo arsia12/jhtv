@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+
 import {
   SafeAreaView,
   StyleSheet,
@@ -7,6 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
+
 import styled from 'styled-components/native';
 
 const Container = styled(SafeAreaView)`
@@ -49,6 +51,17 @@ const StyledText = styled.Text`
   font-weight: 600;
 `;
 
+const StyledTitleText = styled.Text`
+  color: #000;
+  margin-bottom: 30px;
+  font-size: 25px;
+`;
+
+// const RegisterdText = styled.Text`
+//   margin-top: 20px;
+//   color: #555;
+// `;
+
 // const styles = StyleSheet.create({
 //   input: {
 //     width: '100%',
@@ -78,7 +91,9 @@ function LoginScreen({navigation}) {
   };
 
   return (
+    <View style={{ flex: 1, backgroundColor: '#fff' }}>
     <Container>
+      <StyledTitleText >Login</StyledTitleText>
       <Input onChangeText={onChangeEmail} placeholder="이메일" value={email} />
       <Input
         onChangeText={onChangePassword}
@@ -98,7 +113,9 @@ function LoginScreen({navigation}) {
           카카오 로그인
         </StyledText>
       </KaKaoButton>
+      {/* <RegisterdText onPress={() => navigation.navigate('SignUp')}>처음이시라면, 회원가입이 필요해요 :)</RegisterdText> */}
     </Container>
+    </View>
   );
 }
 
