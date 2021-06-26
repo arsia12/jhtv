@@ -7,7 +7,8 @@ export class ImageController {
     constructor (
         private readonly imageService : ImageService,
     ){}
-
+    
+    @imageUpload('image_file')
     async imageUpload () {
 
     }
