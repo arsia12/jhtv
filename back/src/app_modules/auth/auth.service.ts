@@ -1,9 +1,10 @@
-import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {  HttpStatus, Inject, Injectable, Scope } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
 import { UserLoginDto } from './dto/user_login.dto';
 import * as bcrypt from 'bcrypt';
 import { GlobalException } from 'src/common/exceptions/global_exception';
+import { FindPasswordDto } from './dto/findPassword.dto';
 @Injectable()
 export class AuthService {
     constructor(
@@ -55,5 +56,14 @@ export class AuthService {
     async validateHash(password : string, hash : string ): Promise<Boolean> {
         // bcrypt 비동기처리 안됨  
         return await bcrypt.compare(password, hash || '');
+    }
+
+    async findPassword(body : FindPasswordDto ) {
+        const user = await this.userService.findPassword(body);
+        return user.id;
+    }
+
+    async updatePassword(body) {
+        return await this.userService.updatePassword(body);
     }
  }

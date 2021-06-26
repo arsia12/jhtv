@@ -88,6 +88,7 @@ export class UserEntity {
   }
 
   @BeforeInsert()
+  @BeforeUpdate()
   async savePassword() : Promise<void> {
     if(this.password) { 
       const hashedPassword = await this.hashPassword(this.password);

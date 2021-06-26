@@ -1,7 +1,5 @@
-import { Body, HttpStatus, Param, Post } from '@nestjs/common';
-import { IsEmail } from 'class-validator';
+import { Body, Get, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { AbstractController } from 'src/common/abstract_controller';
-import { SwaggerParameter } from 'src/common/decorators/parameter.decotrator';
 import { RouterTag } from 'src/common/decorators/router_swagger_tag.decorator';
 import { SwaggerUserDecorators } from 'src/common/decorators/swagger.decorator';
 import { CreateUserDto } from './dto/createUser.dto';
