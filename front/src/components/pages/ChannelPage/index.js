@@ -73,7 +73,6 @@ const styles = StyleSheet.create({
         height: 65,
         alignItems: 'center',
         justifyContent: 'center',
-        borderTopWidth: 2,
         borderRadius: 50,
         backgroundColor: '#000',
         marginTop: 15,
@@ -99,6 +98,4 @@ const styles = StyleSheet.create({
         marginLeft: 18,
     },
 });
-
-
-export default ChannelScreen
+export default ChannelScreen;
