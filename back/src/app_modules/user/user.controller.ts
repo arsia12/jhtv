@@ -65,6 +65,7 @@ export class UserController extends AbstractController {
     @Req() req: Request,
     @Body() body : UpdateUserDto,
     ) {
-    const result = await this.userService.updateUser(req.user['id'] ,body);
+    const data = await this.userService.updateUser(req.user['id'] ,body);
+    return this.makeResponse({data});
   }
 }
