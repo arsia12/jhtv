@@ -88,6 +88,6 @@ export class UserController extends AbstractController {
     @Req() req: Request,
     @UploadedFile() profile ) {
     const data = await this.userService.createProfileImg(req.user['id'] ,profile);
-    // return this.makeResponse({data});
+    return this.makeResponse({data});
   }
 }
