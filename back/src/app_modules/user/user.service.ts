@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { isEmail, IsEmail } from 'class-validator';
+import { isEmail } from 'class-validator';
 import { GlobalException } from 'src/common/exceptions/global_exception';
 import { CreateUserDto } from './dto/createUser.dto';
 import { FindPasswordDto } from '../auth/dto/findPassword.dto';
@@ -184,7 +184,14 @@ export class UserService {
       })
     }
   }
-  
+
+  //프로필 사진 업로드 및 데이터베이스 등록
+  async createProfileImg(id : number, photo){
+    const user = await this.userRepository.findOne(id);
+    user.profile = photo.path;
+    return await this.userRepository.save(user);
+  }
+
   async validateHash(password : string, hash : string ): Promise<Boolean> {
     // bcrypt 비동기처리 안됨  
     return await bcrypt.compare(password, hash || '');
