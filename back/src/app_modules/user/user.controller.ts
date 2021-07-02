@@ -1,8 +1,11 @@
-import { Body, Get, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import { Body, Get, HttpStatus, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Request } from 'express';
 import { AbstractController } from 'src/common/abstract_controller';
 import { RouterTag } from 'src/common/decorators/router_swagger_tag.decorator';
-import { SwaggerUserDecorators } from 'src/common/decorators/swagger.decorator';
+import { SwaggerDecorators, SwaggerUserDecorators } from 'src/common/decorators/swagger.decorator';
+import { AuthGuard } from 'src/common/guards/auth.guard';
 import { CreateUserDto } from './dto/createUser.dto';
+import { UpdateUserDto } from './dto/updateUser.dto';
 import { UserService } from './user.service';
 
 @RouterTag('user')
@@ -53,5 +56,15 @@ export class UserController extends AbstractController {
         data : '사용 가능한 전화번호 입니다.',
       })
     }
+  }
+
+  @UseGuards(AuthGuard)
+  @SwaggerDecorators('유저 정보 변경')
+  @Put('/:id')
+  async updateUser(
+    @Req() req: Request,
+    @Body() body : UpdateUserDto,
+    ) {
+    const result = await this.userService.updateUser(req.user['id'] ,body);
   }
 }

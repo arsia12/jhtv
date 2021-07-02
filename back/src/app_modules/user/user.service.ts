@@ -5,6 +5,8 @@ import { CreateUserDto } from './dto/createUser.dto';
 import { FindPasswordDto } from '../auth/dto/findPassword.dto';
 import { UserRepository } from './user.repository';
 import { updatePasswordDto } from '../auth/dto/updatePassword.dto';
+import { UpdateUserDto } from './dto/updateUser.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -81,8 +83,13 @@ export class UserService {
 
 
   //회원정보 수정
-  async updateUser() {
-
+  async updateUser(id : number, body : UpdateUserDto) {
+    const user = await this.userRepository.findOne({
+      where : {id : id}, 
+      select : ['password']
+    });
+    console.log(user);
+    
   }
 
   async regUsernameCheck(username : string){
