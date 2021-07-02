@@ -12,7 +12,7 @@ export const imageFilter = (req, file, callback) => {
     return callback(
       new GlobalException({
         statusCode: HttpStatus.BAD_REQUEST,
-        msg: '이미지 파일이 아닙니다..',
+        msg: '이미지 파일이 아닙니다.',
         responseCode: 40000,
       }),
       false,
@@ -24,14 +24,6 @@ export const imageFilter = (req, file, callback) => {
 export const editFileName = (req, file, callback) => {
   const fileExtName = extname(file.originalname);
   const date = String(dayjs().format('hhmmss'));
-
-  // const year = String(moment().year());
-  // const month = String(moment().format('MM'));
-  // const modulePath = req.originalUrl.split('/')[2];
-  // const filePath = join(
-  //   process.cwd(),
-  //   `/uploads/${modulePath}/${year}/${month}`,
-  // );
 
   const mem = req.mem_id ? String(req.mem_id) : 0;
   const randomName = Array(6)

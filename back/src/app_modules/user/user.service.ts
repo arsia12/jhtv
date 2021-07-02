@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { isEmail, IsEmail } from 'class-validator';
+import { isEmail } from 'class-validator';
 import { GlobalException } from 'src/common/exceptions/global_exception';
 import { CreateUserDto } from './dto/createUser.dto';
 import { FindPasswordDto } from '../auth/dto/findPassword.dto';
@@ -86,10 +86,33 @@ export class UserService {
   async updateUser(id : number, body : UpdateUserDto) {
     const user = await this.userRepository.findOne({
       where : {id : id}, 
-      select : ['password']
+      select : ['nickname','phone','email','password']
     });
-    console.log(user);
-    
+    const isPasswordValid = await this.validateHash(
+      body.password,
+      user.password,
+    );
+    if(!isPasswordValid) { 
+      throw new GlobalException({
+        statusCode : HttpStatus.BAD_REQUEST,
+        responseCode : Number(`${HttpStatus.BAD_REQUEST}33`),
+        msg : '비밀번호를 다시 확인해 주세요.'
+      })
+    }
+
+    const userData = await this.userRepository.findOne(id);
+    console.log(userData);
+    if(body.nickname) {
+      userData.nickname = body.nickname;
+    }
+    if(body.phone) {
+      userData.phone = body.phone;
+    }
+    if(body.email) {
+      userData.email = body.email;
+    }
+    console.log(userData);
+    return await this.userRepository.save(userData);
   }
 
   async regUsernameCheck(username : string){
@@ -162,4 +185,15 @@ export class UserService {
     }
   }
 
+  //프로필 사진 업로드 및 데이터베이스 등록
+  async createProfileImg(id : number, photo){
+    const user = await this.userRepository.findOne(id);
+    user.profile = photo.path;
+    return await this.userRepository.save(user);
+  }
+
+  async validateHash(password : string, hash : string ): Promise<Boolean> {
+    // bcrypt 비동기처리 안됨  
+    return await bcrypt.compare(password, hash || '');
+  }
 }

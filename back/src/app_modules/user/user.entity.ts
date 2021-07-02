@@ -16,6 +16,7 @@ import { SubscribeEntity } from '../channel/channel.entity';
 // User.rank enum 필요
 
 const BCRYPT_ROUND = 10;
+const default_img = '';
 
 @Entity({ name: 'User' })
 export class UserEntity {
@@ -36,6 +37,9 @@ export class UserEntity {
 
   @Column({ name: 'nickname', unique : true })
   nickname: string;
+
+  @Column({ name: 'profile', default : default_img })
+  profile: string;
 
   @CreateDateColumn()
   regdate: Date;

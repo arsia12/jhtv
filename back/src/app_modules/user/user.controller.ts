@@ -1,4 +1,5 @@
-import { Body, Get, HttpStatus, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Get, HttpStatus, Param, Post, Put, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
 import { AbstractController } from 'src/common/abstract_controller';
 import { RouterTag } from 'src/common/decorators/router_swagger_tag.decorator';
@@ -7,6 +8,8 @@ import { AuthGuard } from 'src/common/guards/auth.guard';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { UserService } from './user.service';
+import { diskStorage } from 'multer';
+import { editFileName, imageFilter, uploadPath } from 'src/utils/file_upload';
 
 @RouterTag('user')
 export class UserController extends AbstractController {
@@ -65,6 +68,26 @@ export class UserController extends AbstractController {
     @Req() req: Request,
     @Body() body : UpdateUserDto,
     ) {
-    const result = await this.userService.updateUser(req.user['id'] ,body);
+    const data = await this.userService.updateUser(req.user['id'] ,body);
+    return this.makeResponse({data});
+  }
+
+  @UseGuards(AuthGuard)
+  @SwaggerDecorators('프로필 사진 등록')
+  @Post('/profile')
+  @UseInterceptors(
+    FileInterceptor('profile',{
+      storage : diskStorage({
+        destination : uploadPath,
+        filename : editFileName,
+      }),
+      fileFilter : imageFilter,
+    })
+  )
+  async createProfileImg(
+    @Req() req: Request,
+    @UploadedFile() profile ) {
+    const data = await this.userService.createProfileImg(req.user['id'] ,profile);
+    return this.makeResponse({data});
   }
 }
