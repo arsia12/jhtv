@@ -16,7 +16,7 @@ import { SubscribeEntity } from '../channel/channel.entity';
 // User.rank enum 필요
 
 const BCRYPT_ROUND = 10;
-const default_img = '';
+const default_img = 'back/uploads/no_img.png';
 
 @Entity({ name: 'User' })
 export class UserEntity {
