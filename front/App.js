@@ -50,7 +50,6 @@ import ChannelScreen from './src/components/pages/ChannelPage/index'
 const Stack = createStackNavigator();
 
 
-
 function App() {
   return (
     <NavigationContainer>
@@ -65,11 +64,11 @@ function App() {
             fontWeight: 'bold',
           },
         }}>
-        <Stack.Screen name="Channel" component={ChannelScreen} />
+        {/* <Stack.Screen name="Channel" component={ChannelScreen} /> */}
         {/* <Stack.Screen name="Logout" component={LogoutScreen} /> */}
         {/* <Stack.Screen name="Main" component={LandingScreen} /> */}
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="SignUp" component={SignupScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
+        {/* <Stack.Screen name="SignUp" component={SignupScreen} /> */}
       </Stack.Navigator>
     </NavigationContainer>
 
@@ -77,7 +76,6 @@ function App() {
 }
 
 export default App;
-
 
 
 // function HomeScreen() {

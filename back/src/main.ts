@@ -14,7 +14,7 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/document', app, document);
-  await app.listen(3000, '0.0.0.0');
+  await app.listen(8000, '0.0.0.0');
 }
 
 // noinspection JSIgnoredPromiseFromCall

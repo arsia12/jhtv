@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 
 import styled from 'styled-components/native';
+import { Auth } from '../../../store/stores/Stores';
 
 const Container = styled(SafeAreaView)`
   flex: 1;
@@ -83,28 +84,33 @@ const StyledTitleText = styled.Text`
 // });
 
 function LoginScreen({navigation}) {
-  const [email, onChangeEmail] = useState('');
+  const [username, onChangeUsername] = useState('');
   const [password, onChangePassword] = useState(null);
-
-  const login = (e, p) => {
-    console.log(e, p);
+  const auth = Auth();
+  
+  const onLoginHandler = async() => {
+    const data = {
+      username,
+      password
+    }
+    await auth._loginCallApi(data); 
   };
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
     <Container>
       <StyledTitleText >Login</StyledTitleText>
-      <Input onChangeText={onChangeEmail} placeholder="이메일" value={email} />
+      <Input onChangeText={onChangeUsername} placeholder="아이디" value={username} />
       <Input
         onChangeText={onChangePassword}
+        secureTextEntry={true}
         value={password}
         placeholder="비밀번호"
-        keyboardType="numeric"
       />
 
       <SubmitButton
         //style={styles.submitButton}
-        onPress={() => login(email, password)}>
+        onPress={onLoginHandler}>
         <StyledText>로그인</StyledText>
       </SubmitButton>
 
