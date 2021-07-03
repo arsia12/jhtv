@@ -6,7 +6,6 @@ import { FindPasswordDto } from '../auth/dto/findPassword.dto';
 import { UserRepository } from './user.repository';
 import { updatePasswordDto } from '../auth/dto/updatePassword.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
-import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -26,6 +25,10 @@ export class UserService {
 
   async getLoginUser(id: number) {
     return await this.userRepository.findOne(id);
+  }
+
+  async checkPassword(id : number) {
+    return await this.userRepository.findOne({where : {id : id}, select :['password']});
   }
 
   //유저 아이디 찾기
@@ -81,38 +84,10 @@ export class UserService {
     }
   }
 
-
   //회원정보 수정
   async updateUser(id : number, body : UpdateUserDto) {
-    const user = await this.userRepository.findOne({
-      where : {id : id}, 
-      select : ['nickname','phone','email','password']
-    });
-    const isPasswordValid = await this.validateHash(
-      body.password,
-      user.password,
-    );
-    if(!isPasswordValid) { 
-      throw new GlobalException({
-        statusCode : HttpStatus.BAD_REQUEST,
-        responseCode : Number(`${HttpStatus.BAD_REQUEST}33`),
-        msg : '비밀번호를 다시 확인해 주세요.'
-      })
-    }
-
-    const userData = await this.userRepository.findOne(id);
-    console.log(userData);
-    if(body.nickname) {
-      userData.nickname = body.nickname;
-    }
-    if(body.phone) {
-      userData.phone = body.phone;
-    }
-    if(body.email) {
-      userData.email = body.email;
-    }
-    console.log(userData);
-    return await this.userRepository.save(userData);
+    await this.userRepository.update(id, body);
+    return '수정되었습니다.';
   }
 
   async regUsernameCheck(username : string){
@@ -163,6 +138,7 @@ export class UserService {
   }
 
   async regPhoneCheck(phone : string){
+    console.log(phone);
     if(phone.length == 11) { 
       const check = await this.userRepository.findOne({
         where : { phone : phone},
@@ -185,15 +161,29 @@ export class UserService {
     }
   }
 
+  async regNicknameCheck(nickname : string) {
+    if(nickname.length < 8 || nickname.length > 2) {
+      const check = await this.userRepository.findOne({where : {nickname : nickname}});
+      if(nickname) { 
+        throw new GlobalException({
+          statusCode : HttpStatus.CONFLICT,
+          responseCode : Number(`${HttpStatus.CONFLICT}33`),
+          msg : '이미 존재하는 닉네임 입니다.',
+        });
+      }
+    }else { 
+      throw new GlobalException({
+        statusCode : HttpStatus.BAD_REQUEST,
+        responseCode : Number(`${HttpStatus.BAD_REQUEST}33`),
+        msg : '닉네임의 길이는 2자 이상 8자 이하여야 합니다.',
+      })
+    }
+  }
+
   //프로필 사진 업로드 및 데이터베이스 등록
   async createProfileImg(id : number, photo){
     const user = await this.userRepository.findOne(id);
     user.profile = photo.path;
     return await this.userRepository.save(user);
-  }
-
-  async validateHash(password : string, hash : string ): Promise<Boolean> {
-    // bcrypt 비동기처리 안됨  
-    return await bcrypt.compare(password, hash || '');
   }
 }
