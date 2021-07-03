@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from "styled-components";
+import { Auth } from '../../../store/stores/Stores';
 
 import {
   SafeAreaView,
@@ -10,28 +11,57 @@ import {
   View,
   Button
 } from 'react-native';
-
 function SignupScreen({ navigation }) {
-  const [userName, setUserName] = useState("");
+  const auth = Auth();
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [id, setId] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [nickName, setNickName] = useState("");
+  const [nickname, setNickname] = useState("");
+
+  // const onUsernameHandler = (e) => {
+  //   setUsername(e.currentTarget.value);
+  // }
+
+  // const onEmailHandler = (e) => {
+  //   setEmail(e.currentTarget.value);
+  // }
+
+  // const onPasswordHnadler = (e) => {
+  //   setPassword(e.currentTarget.value);
+  // }
+
+  // const onPhoneHandler = (e) => {
+  //   setPhone(e.currentTarget.value);
+  // }
+
+  // const onNickNameHandler = (e) => {
+  //   setNickname(e.currentTarget.value);
+  // }
+  const onRegisterHandler = async() => {
+    const data = {
+      username,
+      password,
+      phone,
+      email,
+      nickname
+    }
+    await auth._registCallApi(data);
+  }
 
   return (
     <View style={{ flex: 1,  backgroundColor: '#fff'}}>
     <Container>
       <StyledTitleText >Register</StyledTitleText>
-      <Input onChangeText={setId} placeholder="아이디" value={id} />
+      <Input onChangeText={setUsername} autoCapitalize='none' placeholder="아이디" value={username} onChange={onUsernameHandler}/>
       {/* <Input onChangeText={setUserName} placeholder="성명" value={userName} ></Input> */}
-      <Input onChangeText={setEmail} placeholder="이메일" value={email} />
-      <Input onChangeText={setPassword} placeholder="비밀번호" value={password} />
-      <Input onChangeText={setPhone} placeholder="핸드폰" value={phone} />
-      <Input onChangeText={setNickName} placeholder="닉네임" value={nickName} />
+      <Input onChangeText={setEmail} autoCapitalize='none' placeholder="이메일" value={email} onChange={onEmailHandler}/>
+      <Input onChangeText={setPassword} autoCapitalize='none' secureTextEntry={true} placeholder="비밀번호" value={password} onChange={onPasswordHnadler}/>
+      <Input onChangeText={setPhone} autoCapitalize='none' placeholder="핸드폰" value={phone} onChange={onPhoneHandler}/>
+      <Input onChangeText={setNickname} autoCapitalize='none' placeholder="닉네임" value={nickname} onChange={onNickNameHandler}/>
       {/* <Input onChangeText={setPassword} placeholder="비밀번호 확인" value={password} /> */}
 
-      <SubmitButton>
+      <SubmitButton onPress={onRegisterHandler}>
         <StyledText>저장</StyledText>
       </SubmitButton>    
       {/* <Button title="Go to Home" onPress={() => navigation.push('Main')} />
