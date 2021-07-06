@@ -19,8 +19,10 @@ class AuthStore {
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/user', data);
       // response msg 결과?
-    } catch (e) {
-      console.log(e.response);
+      console.log(response);
+    } catch(e) {
+      console.log("e",e.response);
+      console.log("data",data);
     }
   };
 

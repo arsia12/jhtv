@@ -63,11 +63,12 @@ function App() {
             fontWeight: 'bold',
           },
         }}>
+        {/* <Stack.Screen name="Video" component={VideoScreen} /> */}
         {/* <Stack.Screen name="Channel" component={ChannelScreen} /> */}
         {/* <Stack.Screen name="Logout" component={LogoutScreen} /> */}
         {/* <Stack.Screen name="Main" component={LandingScreen} /> */}
-          <Stack.Screen name="Login" component={LoginScreen} />
-        {/* <Stack.Screen name="SignUp" component={SignupScreen} /> */}
+        {/* <Stack.Screen name="Login" component={LoginScreen} /> */}
+        <Stack.Screen name="SignUp" component={SignupScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
