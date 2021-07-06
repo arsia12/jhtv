@@ -1,4 +1,4 @@
-import { Body, Get, HttpStatus, Param, Post, Put, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, HttpStatus, Param, Post, Put, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
 import { AbstractController } from 'src/common/abstract_controller';
@@ -22,10 +22,10 @@ export class UserController extends AbstractController {
     await this.userService.createUser(body);
   }
 
-  @SwaggerUserDecorators('아이디 중복 체크')
-  @Post('username/:username')
-  async regUsernameCheck(@Param('username') username: string){
-    const result = await this.userService.regUsernameCheck(username);
+  @SwaggerUserDecorators('아이디 중복 체크', '테스트 입력시 username 항목 외 모든것 지우고 테스트할것')
+  @Post('username')
+  async regUsernameCheck(@Body() body: UpdateUserDto){
+    const result = await this.userService.regUsernameCheck(body.username);
     if(!result) {
       return this.makeResponse({
         statusCode : HttpStatus.OK,
@@ -35,10 +35,10 @@ export class UserController extends AbstractController {
     }
   }
 
-  @SwaggerUserDecorators('이메일 중복 체크')
-  @Post('email/:email')
-  async regEmailCheck(@Param('email') email: string){
-    const result = await this.userService.regEmailCheck(email);
+  @SwaggerUserDecorators('이메일 중복 체크', '테스트 입력시 email 항목 외 모든것 지우고 테스트할것')
+  @Post('email')
+  async regEmailCheck(@Body() body: UpdateUserDto){
+    const result = await this.userService.regEmailCheck(body.email);
     if(!result) {
       return this.makeResponse({
         statusCode : HttpStatus.OK,
@@ -48,10 +48,10 @@ export class UserController extends AbstractController {
     }
   }
 
-  @SwaggerUserDecorators('전화번호 중복 체크')
-  @Post('phone/:phone')
-  async regPhoneCheck(@Param('phone') phone: string){
-    const result = await this.userService.regPhoneCheck(phone);
+  @SwaggerUserDecorators('전화번호 중복 체크', '테스트 입력시 phone 항목 외 모든것 지우고 테스트할것')
+  @Post('phone')
+  async regPhoneCheck(@Body() body: UpdateUserDto){
+    const result = await this.userService.regPhoneCheck(body.phone);
     if(!result) {
       return this.makeResponse({
         statusCode : HttpStatus.OK,
@@ -61,9 +61,22 @@ export class UserController extends AbstractController {
     }
   }
 
+  @SwaggerUserDecorators('닉네임 중복 체크', '테스트 입력시 nickname 항목 외 모든것 지우고 테스트할것')
+  @Post('nickname')
+  async regNicknameCheck(@Body() body: UpdateUserDto){
+    const result = await this.userService.regPhoneCheck(body.nickname);
+    if(!result) {
+      return this.makeResponse({
+        statusCode : HttpStatus.OK,
+        responseCode : Number(`${HttpStatus.OK}04`),
+        data : '사용 가능한 닉네임 입니다.',
+      })
+    }
+  }
+
   @UseGuards(AuthGuard)
   @SwaggerDecorators('유저 정보 변경')
-  @Put('/:id')
+  @Put('')
   async updateUser(
     @Req() req: Request,
     @Body() body : UpdateUserDto,

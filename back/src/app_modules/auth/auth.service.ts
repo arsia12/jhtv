@@ -39,11 +39,10 @@ export class AuthService {
         } else { 
             throw new GlobalException({
                 statusCode : HttpStatus.BAD_REQUEST,
-                responseCode: Number(`${HttpStatus.BAD_REQUEST}99`),
+                responseCode: Number(`${HttpStatus.BAD_REQUEST}00`),
                 msg : '사용자 정보가 올바르지 않습니다.',
             })
         }
-        // return null;
     }
 
     async login(user : any): Promise<any>{
@@ -66,4 +65,5 @@ export class AuthService {
     async updatePassword(body) {
         return await this.userService.updatePassword(body);
     }
+
  }
