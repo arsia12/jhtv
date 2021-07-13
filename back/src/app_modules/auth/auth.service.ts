@@ -1,4 +1,4 @@
-import {  HttpStatus, Inject, Injectable, Scope } from '@nestjs/common';
+import {  HttpService, HttpStatus, Inject, Injectable, Scope } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
 import { UserLoginDto } from './dto/user_login.dto';
@@ -67,3 +67,41 @@ export class AuthService {
     }
 
  }
+
+ @Injectable()
+export class KakaoLogin {
+  check: boolean;
+  accessToken: string;
+  private http: HttpService;
+  constructor() {
+    this.check = false;
+    this.http = new HttpService();
+    this.accessToken = '';
+  }
+  async loginCheck(): Promise<void> {
+    this.check = !this.check;
+    return;
+  }
+  async login(url: string, headers: any): Promise<any> {
+    return await this.http.post(url, '', { headers }).toPromise();
+  }
+  async setToken(token: string): Promise<boolean> {
+    this.accessToken = token;
+    return true;
+  }
+  async logout(): Promise<any> {
+    const _url = 'https://kapi.kakao.com/v1/user/logout';
+    const _header = {
+      Authorization: `bearer ${this.accessToken}`,
+    };
+    return await this.http.post(_url, '', { headers: _header }).toPromise();
+  }
+
+  //다른 로그아웃 유형 테스트
+  async completeLogout() : Promise<any> {
+    const _restApiKey = '2adebdb0de69ccec299e73ff9f483f02';
+    const _redirect_uri = 'http://127.0.0.1:8000/api/auth/kakaoLogout';
+    const _url = `https://kauth.kakao.com/oauth/logout?client_id=${_restApiKey}&logout_redirect_uri=${_redirect_uri}`;
+    return await this.http.get(_url).toPromise();
+  }
+}
